@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status
-from models.post import PostRequest
+from typing import Dict
 from utils.response import StandardResponse
 from controllers.post_controller import post_controller
 
@@ -16,7 +16,7 @@ async def get_posts():
     return StandardResponse.success("GET_POSTS_SUCCESS", data)
 
 @router.get("/{post_id}", response_model=None, status_code=status.HTTP_200_OK)
-async def get_post(post_id: int):
+async def get_post(post_id: str):
     """
     게시글 상세 조회
     - 특정 게시글의 상세 정보 반환
@@ -26,7 +26,7 @@ async def get_post(post_id: int):
     return StandardResponse.success("GET_POST_SUCCESS", data)
 
 @router.post("", response_model=None, status_code=status.HTTP_201_CREATED)
-async def create_post(req: PostRequest):
+async def create_post(req: Dict):
     """
     게시글 생성
     - 인증된 사용자만 작성 가능 (Phase 2에서는 Mock 사용)
@@ -36,7 +36,7 @@ async def create_post(req: PostRequest):
     return StandardResponse.success("CREATE_POST_SUCCESS", data, 201)
 
 @router.patch("/{post_id}", response_model=None, status_code=status.HTTP_200_OK)
-async def update_post(post_id: int, req: PostRequest):
+async def update_post(post_id: str, req: Dict):
     """
     게시글 수정
     - 작성자만 수정 가능 (Phase 2에서는 Mock 사용)
@@ -46,7 +46,7 @@ async def update_post(post_id: int, req: PostRequest):
     return StandardResponse.success("UPDATE_POST_SUCCESS", data)
 
 @router.delete("/{post_id}", response_model=None, status_code=status.HTTP_200_OK)
-async def delete_post(post_id: int):
+async def delete_post(post_id: str):
     """
     게시글 삭제
     - 작성자만 삭제 가능 (Phase 2에서는 Mock 사용)

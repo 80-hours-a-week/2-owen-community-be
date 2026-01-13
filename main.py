@@ -68,6 +68,6 @@ async def health_check():
     return StandardResponse.success("HEALTH_CHECK_OK", {"status": "healthy"})
 
 # 라우터 등록
-from routers.post_router import router as post_router
+from routers import post_router
 
 app.include_router(post_router)

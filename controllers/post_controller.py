@@ -1,100 +1,99 @@
-from typing import List
+from typing import List, Dict
 from datetime import datetime
-from models.post import PostRequest, PostResponse
+from models import board_model
 from utils.exceptions import NotFoundError, ForbiddenError
 
 # --- Controller (Business Logic) ---
 class PostController:
     def __init__(self):
-        # 임시 메모리 저장소 (Phase 2: 딕셔너리 직접 사용)
-        self.posts_db = {}
-        self.next_post_id = 1
+        # Phase 3: Model 계층 사용
         # 임시 사용자 정보 (인증 구현 전까지 하드코딩)
-        self.MOCK_USER_ID = 1
+        self.MOCK_USER_ID = "user_001"  # UUID 형식으로 변경
         self.MOCK_USER_NICKNAME = "테스트유저"
 
     def get_all_posts(self):
         """게시글 목록 조회 로직"""
-        posts_list = sorted(self.posts_db.values(), key=lambda x: x["post_id"], reverse=True)
-        return [
-            PostResponse(
-                post_id=post["post_id"],
-                title=post["title"],
-                content=post["content"],
-                author_id=post["author_id"],
-                author_nickname=post["author_nickname"],
-                created_at=post["created_at"],
-                updated_at=post.get("updated_at")
-            ).dict()
-            for post in posts_list
-        ]
+        posts_data = board_model.get_posts()
+        return posts_data
 
-    def get_post_by_id(self, post_id: int):
+    def get_post_by_id(self, post_id: str):
         """게시글 상세 조회 로직"""
-        if post_id not in self.posts_db:
+        post = board_model.get_post_by_id(post_id)
+        if not post:
             raise NotFoundError("게시글")
-        
-        post = self.posts_db[post_id]
-        return PostResponse(**post).dict()
 
-    def create_post(self, req: PostRequest):
+        # 조회수 증가
+        board_model.increment_view_count(post_id)
+
+        return post
+
+    def create_post(self, req: Dict):
         """게시글 생성 로직"""
         # 입력값 검증 (제목과 내용이 비어있는지 확인)
-        if not req.title.strip():
-            raise ForbiddenError("제목은 비어있을 수 없습니다")
-        if not req.content.strip():
-            raise ForbiddenError("내용은 비어있을 수 없습니다")
-        
-        post_id = self.next_post_id
-        post_data = {
-            "post_id": post_id,
-            "title": req.title,
-            "content": req.content,
-            "author_id": self.MOCK_USER_ID,
-            "author_nickname": self.MOCK_USER_NICKNAME,
-            "created_at": datetime.now().isoformat(),
-            "updated_at": None
-        }
-        
-        self.posts_db[post_id] = post_data
-        self.next_post_id += 1
-        return PostResponse(**post_data).dict()
+        title = req.get("title", "").strip()
+        content = req.get("content", "").strip()
 
-    def update_post(self, post_id: int, req: PostRequest):
+        if not title:
+            raise ForbiddenError("제목은 비어있을 수 없습니다")
+        if not content:
+            raise ForbiddenError("내용은 비어있을 수 없습니다")
+
+        # Model을 통해 게시글 생성
+        post_data = board_model.create_post(
+            title=title,
+            content=content,
+            author_id=self.MOCK_USER_ID,
+            author_nickname=self.MOCK_USER_NICKNAME
+        )
+
+        return post_data
+
+    def update_post(self, post_id: str, req: Dict):
         """게시글 수정 로직"""
-        if post_id not in self.posts_db:
+        post = board_model.get_post_by_id(post_id)
+        if not post:
             raise NotFoundError("게시글")
-        
-        post = self.posts_db[post_id]
-        
+
         # TODO: Phase 7에서 세션 기반 권한 확인 추가
         if post["author_id"] != self.MOCK_USER_ID:
             raise ForbiddenError("게시글 작성자만 수정할 수 있습니다")
-        
-        # 입력값 검증
-        if not req.title.strip():
-            raise ForbiddenError("제목은 비어있을 수 없습니다")
-        if not req.content.strip():
-            raise ForbiddenError("내용은 비어있을 수 없습니다")
-        
-        post["title"] = req.title
-        post["content"] = req.content
-        post["updated_at"] = datetime.now().isoformat()
-        
-        return PostResponse(**post).dict()
 
-    def delete_post(self, post_id: int):
+        # 입력값 검증
+        title = req.get("title", "").strip()
+        content = req.get("content", "").strip()
+
+        if not title:
+            raise ForbiddenError("제목은 비어있을 수 없습니다")
+        if not content:
+            raise ForbiddenError("내용은 비어있을 수 없습니다")
+
+        # Model을 통해 게시글 수정
+        updated_post = board_model.update_post(
+            post_id=post_id,
+            title=title,
+            content=content
+        )
+
+        return updated_post
+
+    def delete_post(self, post_id: str):
         """게시글 삭제 로직"""
-        if post_id not in self.posts_db:
+        post = board_model.get_post_by_id(post_id)
+        if not post:
             raise NotFoundError("게시글")
-        
-        post = self.posts_db[post_id]
-        
+
         # TODO: Phase 7에서 세션 기반 권한 확인 추가
         if post["author_id"] != self.MOCK_USER_ID:
             raise ForbiddenError("게시글 작성자만 삭제할 수 있습니다")
-        
-        return self.posts_db.pop(post_id)
+
+        # 게시글 삭제 시 관련 댓글들도 함께 삭제
+        from models import comment_model
+        deleted_comments_count = comment_model.delete_comments_by_post(post_id)
+
+        # Model을 통해 게시글 삭제
+        board_model.delete_post(post_id)
+
+        return post
 
 # 컨트롤러 인스턴스 생성
 post_controller = PostController()
