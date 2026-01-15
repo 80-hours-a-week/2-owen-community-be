@@ -15,6 +15,8 @@ class Settings:
 
     SESSION_TIMEOUT = int(os.getenv("SESSION_TIMEOUT", "86400"))  # 24시간
 
+    SECRET_KEY = os.getenv("SECRET_KEY", "local-dev-secret-key")
+
     DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 settings = Settings()
