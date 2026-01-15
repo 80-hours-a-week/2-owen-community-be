@@ -1,20 +1,28 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, List, Union
 from datetime import datetime
-import uuid
+from uuid import UUID, uuid4
 
 
 class UserModel:
     """사용자 데이터 관리 Model"""
 
     def __init__(self):
-        # 메모리 기반 사용자 저장소
+        # 메모리 기반 사용자 저장소 (Key를 문자열로 관리)
         self.users_db: Dict[str, Dict] = {}
-        self.next_user_id = 1
+
+    def _normalize_id(self, id_val: Union[UUID, str]) -> str:
+        """ID 정규화"""
+        if isinstance(id_val, UUID):
+            return str(id_val)
+        try:
+            UUID(id_val)
+            return id_val
+        except (ValueError, AttributeError):
+            raise ValueError(f"Invalid UUID format: {id_val}")
 
     def get_next_user_id(self) -> str:
-        """다음 사용자 ID 생성 (UUID 사용)"""
-        user_id = str(uuid.uuid4())
-        return user_id
+        """다음 사용자 ID 생성"""
+        return str(uuid4())
 
     def create_user(self, email: str, password: str, nickname: str, profile_image_url: Optional[str] = None) -> Dict:
         """사용자 생성"""
@@ -23,7 +31,7 @@ class UserModel:
         user_data = {
             "user_id": user_id,
             "email": email,
-            "password": password,  # 실제로는 해싱해야 함 (Phase 4에서 구현)
+            "password": password,
             "nickname": nickname,
             "profile_image_url": profile_image_url,
             "created_at": datetime.now().isoformat(),
@@ -33,9 +41,13 @@ class UserModel:
         self.users_db[user_id] = user_data
         return user_data.copy()
 
-    def get_user_by_id(self, user_id: str) -> Optional[Dict]:
+    def get_user_by_id(self, user_id: Union[UUID, str]) -> Optional[Dict]:
         """ID로 사용자 조회"""
-        return self.users_db.get(user_id)
+        try:
+            user_id_str = self._normalize_id(user_id)
+            return self.users_db.get(user_id_str)
+        except ValueError:
+            return None
 
     def get_user_by_email(self, email: str) -> Optional[Dict]:
         """이메일로 사용자 조회"""
@@ -55,37 +67,43 @@ class UserModel:
                 return True
         return False
 
-    def update_user(self, user_id: str, update_data: Dict) -> Optional[Dict]:
+    def update_user(self, user_id: Union[UUID, str], update_data: Dict) -> Optional[Dict]:
         """사용자 정보 수정"""
-        if user_id not in self.users_db:
+        try:
+            user_id_str = self._normalize_id(user_id)
+            if user_id_str not in self.users_db:
+                return None
+
+            user = self.users_db[user_id_str]
+            allowed_fields = ["nickname", "profile_image_url", "password"]
+            for field in allowed_fields:
+                if field in update_data:
+                    user[field] = update_data[field]
+
+            user["updated_at"] = datetime.now().isoformat()
+            return user.copy()
+        except ValueError:
             return None
 
-        user = self.users_db[user_id]
-
-        # 업데이트 가능한 필드들
-        allowed_fields = ["nickname", "profile_image_url", "password"]
-        for field in allowed_fields:
-            if field in update_data:
-                user[field] = update_data[field]
-
-        user["updated_at"] = datetime.now().isoformat()
-        return user.copy()
-
-    def delete_user(self, user_id: str) -> bool:
+    def delete_user(self, user_id: Union[UUID, str]) -> bool:
         """사용자 삭제"""
-        if user_id in self.users_db:
-            del self.users_db[user_id]
-            return True
-        return False
+        try:
+            user_id_str = self._normalize_id(user_id)
+            if user_id_str in self.users_db:
+                del self.users_db[user_id_str]
+                return True
+            return False
+        except ValueError:
+            return False
 
-    def get_all_users(self) -> list:
-        """모든 사용자 조회 (관리용)"""
+    def get_all_users(self) -> List[Dict]:
+        """모든 사용자 조회"""
         return list(self.users_db.values())
 
     def authenticate_user(self, email: str, password: str) -> Optional[Dict]:
-        """사용자 인증 (로그인용)"""
+        """사용자 인증"""
         user = self.get_user_by_email(email)
-        if user and user["password"] == password:  # 실제로는 해싱 비교
+        if user and user["password"] == password:
             return user
         return None
 

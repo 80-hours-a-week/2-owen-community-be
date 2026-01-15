@@ -15,7 +15,7 @@ FastAPI 기반의 커뮤니티 백엔드 API입니다. Router-Controller-Model �
 
 - Framework: FastAPI
 - Server: Uvicorn
-- Validation: 수동 검증 (학습 목적)
+- Validation: Pydantic 자동 검증 (UUID 타입 지원)
 - Storage: In-memory
 
 ## 프로젝트 구조
@@ -97,6 +97,8 @@ FastAPI 기반의 커뮤니티 백엔드 API입니다. Router-Controller-Model �
 - 게시글 및 댓글 CRUD API 구현
 - 인메모리 데이터 저장소 (User, Post, Comment)
 - 표준화된 API 응답 및 에러 처리
+- UUID 타입 기반 Path Parameter 자동 검증
+- 데이터 무결성 확보 (falsy 값 처리)
 
 ## 다음 단계
 
@@ -108,4 +110,5 @@ FastAPI 기반의 커뮤니티 백엔드 API입니다. Router-Controller-Model �
 
 - 서버 실행 시 --reload 옵션 권장
 - 모든 API 엔드포인트는 /v1 접두사 사용
+- Path Parameter는 UUID 형식을 사용하며 자동 검증됨
 - 현재 인메모리 저장소 사용으로 서버 재시작 시 데이터 초기화

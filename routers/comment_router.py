@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status
 from typing import Dict
+from uuid import UUID
 from utils.response import StandardResponse
 from utils.error_codes import SuccessCode
 from controllers.comment_controller import comment_controller
@@ -7,7 +8,7 @@ from controllers.comment_controller import comment_controller
 router = APIRouter(prefix="/v1/posts", tags=["댓글"])
 
 @router.get("/{post_id}/comments", response_model=None, status_code=status.HTTP_200_OK)
-async def get_comments(post_id: str):
+async def get_comments(post_id: UUID):
     """
     댓글 목록 조회
     - 특정 게시글의 모든 댓글을 최신순으로 반환
@@ -17,7 +18,7 @@ async def get_comments(post_id: str):
     return StandardResponse.success(SuccessCode.COMMENTS_RETRIEVED, data)
 
 @router.post("/{post_id}/comments", response_model=None, status_code=status.HTTP_201_CREATED)
-async def create_comment(post_id: str, req: Dict):
+async def create_comment(post_id: UUID, req: Dict):
     """
     댓글 작성
     - 인증된 사용자만 작성 가능 (현재는 Mock 사용)
@@ -28,7 +29,7 @@ async def create_comment(post_id: str, req: Dict):
     return StandardResponse.success(SuccessCode.COMMENT_CREATED, {"comment_id": data["comment_id"]}, 201)
 
 @router.patch("/{post_id}/comments/{comment_id}", response_model=None, status_code=status.HTTP_200_OK)
-async def update_comment(post_id: str, comment_id: str, req: Dict):
+async def update_comment(post_id: UUID, comment_id: UUID, req: Dict):
     """
     댓글 수정
     - 작성자만 수정 가능 (현재는 Mock 사용)
@@ -39,7 +40,7 @@ async def update_comment(post_id: str, comment_id: str, req: Dict):
     return StandardResponse.success(SuccessCode.COMMENT_UPDATED, None)
 
 @router.delete("/{post_id}/comments/{comment_id}", response_model=None, status_code=status.HTTP_200_OK)
-async def delete_comment(post_id: str, comment_id: str):
+async def delete_comment(post_id: UUID, comment_id: UUID):
     """
     댓글 삭제
     - 작성자만 삭제 가능 (현재는 Mock 사용)

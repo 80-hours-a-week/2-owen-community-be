@@ -28,7 +28,7 @@ class StandardResponse:
             "status": "success",
             "code": code.value,
             "message": get_success_message(code),
-            "data": data or {},
+            "data": data if data is not None else {},
             "status_code": status_code
         }
 

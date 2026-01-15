@@ -1,29 +1,39 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from datetime import datetime
-import uuid
+from uuid import UUID, uuid4
 
 
 class CommentModel:
     """댓글 데이터 관리 Model"""
 
     def __init__(self):
-        # 메모리 기반 댓글 저장소
+        # 메모리 기반 댓글 저장소 (Key를 문자열로 관리)
         self.comments_db: Dict[str, Dict] = {}
-        self.next_comment_id = 1
+
+    def _normalize_id(self, id_val: Union[UUID, str]) -> str:
+        """ID 정규화 (UUID 객체 또는 문자열 -> 문자열)"""
+        if isinstance(id_val, UUID):
+            return str(id_val)
+        try:
+            UUID(id_val)
+            return id_val
+        except (ValueError, AttributeError):
+            raise ValueError(f"Invalid UUID format: {id_val}")
 
     def get_next_comment_id(self) -> str:
-        """다음 댓글 ID 생성 (UUID 사용)"""
-        comment_id = str(uuid.uuid4())
-        return comment_id
+        """다음 댓글 ID 생성"""
+        return str(uuid4())
 
-    def create_comment(self, post_id: str, user_id: str, user_nickname: str, content: str) -> Dict:
+    def create_comment(self, post_id: Union[UUID, str], user_id: Union[UUID, str], user_nickname: str, content: str) -> Dict:
         """댓글 생성"""
         comment_id = self.get_next_comment_id()
+        post_id_str = self._normalize_id(post_id)
+        user_id_str = self._normalize_id(user_id)
 
         comment_data = {
             "comment_id": comment_id,
-            "post_id": post_id,
-            "user_id": user_id,
+            "post_id": post_id_str,
+            "user_id": user_id_str,
             "user_nickname": user_nickname,
             "content": content,
             "created_at": datetime.now().isoformat(),
@@ -33,63 +43,90 @@ class CommentModel:
         self.comments_db[comment_id] = comment_data
         return comment_data.copy()
 
-    def get_comments_by_post(self, post_id: str) -> List[Dict]:
+    def get_comments_by_post(self, post_id: Union[UUID, str]) -> List[Dict]:
         """특정 게시글의 모든 댓글 조회 (최신순)"""
-        post_comments = [
-            comment for comment in self.comments_db.values()
-            if comment["post_id"] == post_id
-        ]
+        try:
+            post_id_str = self._normalize_id(post_id)
+            post_comments = [
+                comment for comment in self.comments_db.values()
+                if comment["post_id"] == post_id_str
+            ]
+            # 최신순 정렬
+            return sorted(post_comments, key=lambda x: x["created_at"], reverse=True)
+        except ValueError:
+            return []
 
-        # 최신순 정렬
-        return sorted(post_comments, key=lambda x: x["created_at"], reverse=True)
-
-    def get_comment_by_id(self, comment_id: str) -> Optional[Dict]:
+    def get_comment_by_id(self, comment_id: Union[UUID, str]) -> Optional[Dict]:
         """ID로 댓글 조회"""
-        return self.comments_db.get(comment_id)
-
-    def update_comment(self, comment_id: str, content: str) -> Optional[Dict]:
-        """댓글 수정"""
-        if comment_id not in self.comments_db:
+        try:
+            comment_id_str = self._normalize_id(comment_id)
+            return self.comments_db.get(comment_id_str)
+        except ValueError:
             return None
 
-        comment = self.comments_db[comment_id]
-        comment["content"] = content
-        comment["updated_at"] = datetime.now().isoformat()
+    def update_comment(self, comment_id: Union[UUID, str], content: str) -> Optional[Dict]:
+        """댓글 수정"""
+        try:
+            comment_id_str = self._normalize_id(comment_id)
+            if comment_id_str not in self.comments_db:
+                return None
 
-        return comment.copy()
+            comment = self.comments_db[comment_id_str]
+            comment["content"] = content
+            comment["updated_at"] = datetime.now().isoformat()
 
-    def delete_comment(self, comment_id: str) -> bool:
+            return comment.copy()
+        except ValueError:
+            return None
+
+    def delete_comment(self, comment_id: Union[UUID, str]) -> bool:
         """댓글 삭제"""
-        if comment_id in self.comments_db:
-            del self.comments_db[comment_id]
-            return True
-        return False
+        try:
+            comment_id_str = self._normalize_id(comment_id)
+            if comment_id_str in self.comments_db:
+                del self.comments_db[comment_id_str]
+                return True
+            return False
+        except ValueError:
+            return False
 
-    def get_comments_by_user(self, user_id: str) -> List[Dict]:
+    def get_comments_by_user(self, user_id: Union[UUID, str]) -> List[Dict]:
         """특정 사용자의 모든 댓글 조회"""
-        return [
-            comment for comment in self.comments_db.values()
-            if comment["user_id"] == user_id
-        ]
+        try:
+            user_id_str = self._normalize_id(user_id)
+            return [
+                comment for comment in self.comments_db.values()
+                if comment["user_id"] == user_id_str
+            ]
+        except ValueError:
+            return []
 
-    def get_comments_count_by_post(self, post_id: str) -> int:
+    def get_comments_count_by_post(self, post_id: Union[UUID, str]) -> int:
         """특정 게시글의 댓글 수 조회"""
-        return len([
-            comment for comment in self.comments_db.values()
-            if comment["post_id"] == post_id
-        ])
+        try:
+            post_id_str = self._normalize_id(post_id)
+            return len([
+                comment for comment in self.comments_db.values()
+                if comment["post_id"] == post_id_str
+            ])
+        except ValueError:
+            return 0
 
-    def delete_comments_by_post(self, post_id: str) -> int:
-        """특정 게시글의 모든 댓글 삭제 (게시글 삭제 시 사용)"""
-        comments_to_delete = [
-            comment_id for comment_id, comment in self.comments_db.items()
-            if comment["post_id"] == post_id
-        ]
+    def delete_comments_by_post(self, post_id: Union[UUID, str]) -> int:
+        """특정 게시글의 모든 댓글 삭제"""
+        try:
+            post_id_str = self._normalize_id(post_id)
+            comments_to_delete = [
+                comment_id for comment_id, comment in self.comments_db.items()
+                if comment["post_id"] == post_id_str
+            ]
 
-        for comment_id in comments_to_delete:
-            del self.comments_db[comment_id]
+            for comment_id in comments_to_delete:
+                del self.comments_db[comment_id]
 
-        return len(comments_to_delete)
+            return len(comments_to_delete)
+        except ValueError:
+            return 0
 
     def get_total_comments_count(self) -> int:
         """전체 댓글 수 조회"""
