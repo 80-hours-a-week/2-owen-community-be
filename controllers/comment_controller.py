@@ -9,9 +9,7 @@ class CommentController:
     """댓글 관련 비즈니스 로직"""
 
     def __init__(self):
-        # 임시 사용자 정보
-        self.MOCK_USER_ID = "00000000-0000-0000-0000-000000000001"
-        self.MOCK_USER_NICKNAME = "테스트유저"
+        pass
 
     def get_comments_by_post(self, post_id: Union[UUID, str]) -> List[Dict]:
         """특정 게시글의 댓글 목록 조회"""
@@ -24,7 +22,7 @@ class CommentController:
         comments = comment_model.get_comments_by_post(post_id)
         return comments
 
-    def create_comment(self, post_id: Union[UUID, str], req: Dict) -> Dict:
+    def create_comment(self, post_id: Union[UUID, str], req: Dict, user_id: str, nickname: str) -> Dict:
         """댓글 작성"""
         # 게시글 존재 여부 확인
         post = post_model.get_post_by_id(post_id)
@@ -39,14 +37,14 @@ class CommentController:
         # 댓글 생성
         comment_data = comment_model.create_comment(
             post_id=post_id,
-            user_id=self.MOCK_USER_ID,
-            user_nickname=self.MOCK_USER_NICKNAME,
+            user_id=user_id,
+            user_nickname=nickname,
             content=content
         )
 
         return comment_data
 
-    def update_comment(self, post_id: Union[UUID, str], comment_id: Union[UUID, str], req: Dict) -> Dict:
+    def update_comment(self, post_id: Union[UUID, str], comment_id: Union[UUID, str], req: Dict, user_id: str) -> Dict:
         """댓글 수정"""
         # 게시글 존재 여부 확인
         post = post_model.get_post_by_id(post_id)
@@ -63,7 +61,7 @@ class CommentController:
             raise NotFoundError("댓글")
 
         # 권한 확인 (작성자만 수정 가능)
-        if str(comment["user_id"]) != self.MOCK_USER_ID:
+        if str(comment["user_id"]) != str(user_id):
             raise ForbiddenError(ErrorCode.NOT_OWNER, {"resource": "댓글"})
 
         # 입력값 검증
@@ -82,7 +80,7 @@ class CommentController:
 
         return updated_comment
 
-    def delete_comment(self, post_id: Union[UUID, str], comment_id: Union[UUID, str]) -> Dict:
+    def delete_comment(self, post_id: Union[UUID, str], comment_id: Union[UUID, str], user_id: str) -> Dict:
         """댓글 삭제"""
         # 게시글 존재 여부 확인
         post = post_model.get_post_by_id(post_id)
@@ -99,7 +97,7 @@ class CommentController:
             raise NotFoundError("댓글")
 
         # 권한 확인 (작성자만 삭제 가능)
-        if str(comment["user_id"]) != self.MOCK_USER_ID:
+        if str(comment["user_id"]) != str(user_id):
             raise ForbiddenError(ErrorCode.NOT_OWNER, {"resource": "댓글"})
 
         # 댓글 삭제

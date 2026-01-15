@@ -10,6 +10,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
+from starlette.middleware.sessions import SessionMiddleware
+from config import settings
 from utils.exceptions import APIException
 from utils.response import StandardResponse
 from utils.error_codes import ErrorCode, SuccessCode
@@ -25,6 +27,15 @@ app = FastAPI(
     title="Owen Community Backend",
     description="FastAPI 기반 커뮤니티 백엔드 API",
     version="1.0.0"
+)
+
+# 세션 설정 (로컬 개발 환경 기준)
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SECRET_KEY,
+    https_only=settings.COOKIE_SECURE,
+    same_site=settings.COOKIE_SAMESITE,
+    max_age=settings.SESSION_TIMEOUT
 )
 
 # CORS 설정 (프론트엔드 연동)
@@ -91,7 +102,8 @@ async def health_check():
     return StandardResponse.success(SuccessCode.HEALTH_CHECK_OK, {"status": "healthy"})
 
 # 라우터 등록
-from routers import post_router, comment_router
+from routers import post_router, comment_router, auth_router
 
 app.include_router(post_router)
 app.include_router(comment_router)
+app.include_router(auth_router)
