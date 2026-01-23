@@ -14,6 +14,10 @@ class CommentModel:
         """ID 정규화 (문자열로 변환)"""
         return str(idVal)
 
+    def clear(self):
+        """저장소 초기화 (테스트용)"""
+        self.commentsDb.clear()
+
     def getNextCommentId(self) -> str:
         """다음 댓글 ID 생성 (ULID)"""
         return generate_id()

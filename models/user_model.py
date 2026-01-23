@@ -30,6 +30,12 @@ class UserModel:
         except Exception:
             return False
 
+    def clear(self):
+        """저장소 초기화 (테스트용)"""
+        self.usersDb.clear()
+        self.emailMap.clear()
+        self.nicknameMap.clear()
+
     def getNextUserId(self) -> str:
         """다음 사용자 ID 생성 (ULID)"""
         return generate_id()

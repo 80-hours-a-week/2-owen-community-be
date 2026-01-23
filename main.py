@@ -35,7 +35,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="Owen Community Backend",
+    title="AWS AI School 2기 Backend",
     description="FastAPI 기반 커뮤니티 백엔드 API",
     version="1.0.0"
 )
@@ -57,7 +57,12 @@ app.add_middleware(SessionMiddleware,
                    same_site=settings.cookie_samesite,
                    max_age=settings.session_timeout)
 app.add_middleware(CORSMiddleware,
-                   allow_origins=["*"],
+                   allow_origins=[
+                       "http://localhost:5500", 
+                       "http://127.0.0.1:5500",
+                       "http://localhost:5501",
+                       "http://127.0.0.1:5501"
+                   ],
                    allow_credentials=True,
                    allow_methods=["*"],
                    allow_headers=["*"])
@@ -98,3 +103,9 @@ app.include_router(post_router)
 app.include_router(comment_router)
 app.include_router(auth_router)
 app.include_router(user_router)
+
+# 개발 환경(Debug Mode)에서만 테스트 라우터 포함
+if settings.debug:
+    from routers import test_router
+    app.include_router(test_router)
+    logger.info("Test router included (Debug Mode: ON)")

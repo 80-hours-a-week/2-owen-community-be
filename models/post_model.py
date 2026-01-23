@@ -16,6 +16,11 @@ class PostModel:
         """ID 정규화 (문자열로 변환)"""
         return str(idVal)
 
+    def clear(self):
+        """저장소 초기화 (테스트용)"""
+        self.postsDb.clear()
+        self.likesDb.clear()
+
     def getNextPostId(self) -> str:
         """다음 게시글 ID 생성 (ULID)"""
         return generate_id()

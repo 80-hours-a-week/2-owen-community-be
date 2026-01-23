@@ -1,0 +1,1149 @@
+{
+  "timestamp": "2026-01-21T13:48:49.399876",
+  "summary": {
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "error": 0
+  },
+  "details": [
+    {
+      "nodeid": "Week3/test/test_api.py::test_signup_success",
+      "status": "passed",
+      "duration": 0.24532574999830103,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "test@example.com",
+            "password": "password123",
+            "nickname": "tester"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "userId": "01KFFE4C91H808RSW355ZPAB3Q",
+                "email": "test@example.com",
+                "nickname": "tester",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:44.555791",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        }
+      ],
+      "message": null
+    },
+    {
+      "nodeid": "Week3/test/test_api.py::test_signup_failure_invalid_input",
+      "status": "passed",
+      "duration": 0.0025866249998216517,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "invalid-email",
+            "password": "short",
+            "nickname": ""
+          },
+          "output": {
+            "status_code": 422,
+            "body": {
+              "code": "INVALID_INPUT",
+              "message": "입력 값이 올바르지 않습니다.",
+              "details": {
+                "email": [
+                  "INVALID_FORMAT"
+                ],
+                "password": [
+                  "TOO_SHORT"
+                ],
+                "nickname": [
+                  "TOO_SHORT"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "message": null
+    },
+    {
+      "nodeid": "Week3/test/test_api.py::test_signup_failure_duplicate",
+      "status": "passed",
+      "duration": 0.24188404199958313,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "dup@example.com",
+            "password": "password123",
+            "nickname": "user1"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "userId": "01KFFE4CGK5ZEGMVFR8WGCPW1J",
+                "email": "dup@example.com",
+                "nickname": "user1",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:44.799838",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "dup@example.com",
+            "password": "password123",
+            "nickname": "user2"
+          },
+          "output": {
+            "status_code": 409,
+            "body": {
+              "code": "ALREADY_EXISTS",
+              "message": "이미 사용 중인 이메일입니다.",
+              "details": {
+                "field": "email",
+                "value": "dup@example.com"
+              }
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "other@example.com",
+            "password": "password123",
+            "nickname": "user1"
+          },
+          "output": {
+            "status_code": 409,
+            "body": {
+              "code": "ALREADY_EXISTS",
+              "message": "이미 사용 중인 닉네임입니다.",
+              "details": {
+                "field": "nickname",
+                "value": "user1"
+              }
+            }
+          }
+        }
+      ],
+      "message": null
+    },
+    {
+      "nodeid": "Week3/test/test_api.py::test_login_lifecycle",
+      "status": "passed",
+      "duration": 0.4760396250003396,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "login@example.com",
+            "password": "password123",
+            "nickname": "tester"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "userId": "01KFFE4CR67E8ECX9WSRQ51E61",
+                "email": "login@example.com",
+                "nickname": "tester",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:45.039883",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "login@example.com",
+            "password": "password123"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "userId": "01KFFE4CR67E8ECX9WSRQ51E61",
+                "email": "login@example.com",
+                "nickname": "tester",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:45.039883",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "url": "/v1/auth/me",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "userId": "01KFFE4CR67E8ECX9WSRQ51E61",
+                "email": "login@example.com",
+                "nickname": "tester",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:45.039883",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/logout",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {},
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "url": "/v1/auth/me",
+          "input": null,
+          "output": {
+            "status_code": 401,
+            "body": {
+              "code": "UNAUTHORIZED",
+              "message": "로그인이 필요합니다.",
+              "details": {}
+            }
+          }
+        }
+      ],
+      "message": null
+    },
+    {
+      "nodeid": "Week3/test/test_api.py::test_login_failure",
+      "status": "passed",
+      "duration": 0.47421804199984763,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "fail@example.com",
+            "password": "password123",
+            "nickname": "tester"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "userId": "01KFFE4D72GHE926C7C9ABMCJC",
+                "email": "fail@example.com",
+                "nickname": "tester",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:45.517415",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "fail@example.com",
+            "password": "wrongpassword"
+          },
+          "output": {
+            "status_code": 401,
+            "body": {
+              "code": "INVALID_CREDENTIALS",
+              "message": "인증 정보가 올바르지 않습니다.",
+              "details": {}
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "none@example.com",
+            "password": "password123"
+          },
+          "output": {
+            "status_code": 401,
+            "body": {
+              "code": "INVALID_CREDENTIALS",
+              "message": "인증 정보가 올바르지 않습니다.",
+              "details": {}
+            }
+          }
+        }
+      ],
+      "message": null
+    },
+    {
+      "nodeid": "Week3/test/test_api.py::test_user_update_success",
+      "status": "passed",
+      "duration": 0.9636291670012724,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "update@test.com",
+            "password": "password123",
+            "nickname": "oldNick"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "userId": "01KFFE4DNX1GP0Z0XYV0PYRTJN",
+                "email": "update@test.com",
+                "nickname": "oldNick",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:45.992341",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "update@test.com",
+            "password": "password123"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "userId": "01KFFE4DNX1GP0Z0XYV0PYRTJN",
+                "email": "update@test.com",
+                "nickname": "oldNick",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:45.992341",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "PATCH",
+          "url": "/v1/users/me",
+          "input": {
+            "nickname": "newNick"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "UPDATED",
+              "message": "리소스가 성공적으로 수정되었습니다.",
+              "data": {
+                "userId": "01KFFE4DNX1GP0Z0XYV0PYRTJN",
+                "email": "update@test.com",
+                "nickname": "newNick",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:45.992341",
+                "updatedAt": "2026-01-21T13:48:46.236354"
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "PATCH",
+          "url": "/v1/users/password",
+          "input": {
+            "password": "newpassword123"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "UPDATED",
+              "message": "리소스가 성공적으로 수정되었습니다.",
+              "data": {},
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/logout",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {},
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "update@test.com",
+            "password": "newpassword123"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "userId": "01KFFE4DNX1GP0Z0XYV0PYRTJN",
+                "email": "update@test.com",
+                "nickname": "newNick",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:45.992341",
+                "updatedAt": "2026-01-21T13:48:46.474560"
+              },
+              "details": null
+            }
+          }
+        }
+      ],
+      "message": null
+    },
+    {
+      "nodeid": "Week3/test/test_api.py::test_user_delete_success",
+      "status": "passed",
+      "duration": 0.47584787500090897,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "del@test.com",
+            "password": "password123",
+            "nickname": "to_be_deleted"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "userId": "01KFFE4EM22VG5W3TDYKR7VWB7",
+                "email": "del@test.com",
+                "nickname": "to_be_deleted",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:46.956756",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "del@test.com",
+            "password": "password123"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "userId": "01KFFE4EM22VG5W3TDYKR7VWB7",
+                "email": "del@test.com",
+                "nickname": "to_be_deleted",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:46.956756",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "DELETE",
+          "url": "/v1/users/me",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {},
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "del@test.com",
+            "password": "password123"
+          },
+          "output": {
+            "status_code": 401,
+            "body": {
+              "code": "INVALID_CREDENTIALS",
+              "message": "인증 정보가 올바르지 않습니다.",
+              "details": {}
+            }
+          }
+        }
+      ],
+      "message": null
+    },
+    {
+      "nodeid": "Week3/test/test_api.py::test_post_full_lifecycle",
+      "status": "passed",
+      "duration": 1.213846333001129,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "p@t.com",
+            "password": "password123",
+            "nickname": "writer"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                "email": "p@t.com",
+                "nickname": "writer",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:47.435541",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "p@t.com",
+            "password": "password123"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                "email": "p@t.com",
+                "nickname": "writer",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:47.435541",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts",
+          "input": {
+            "title": "Test Title",
+            "content": "Test Content"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "postId": "01KFFE4FHXZTSVG1NBXHXSJ7AM",
+                "title": "Test Title",
+                "content": "Test Content",
+                "likeCount": 0,
+                "commentCount": 0,
+                "hits": 0,
+                "author": {
+                  "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                  "nickname": "writer",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-21T13:48:47.677445",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "postId": "01KFFE4FHXZTSVG1NBXHXSJ7AM",
+                "title": "Test Title",
+                "content": "Test Content",
+                "likeCount": 0,
+                "commentCount": 0,
+                "hits": 1,
+                "author": {
+                  "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                  "nickname": "writer",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-21T13:48:47.677445",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM/likes",
+          "input": null,
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "UPDATED",
+              "message": "리소스가 성공적으로 수정되었습니다.",
+              "data": {
+                "likeCount": 1
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM/likes",
+          "input": null,
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "UPDATED",
+              "message": "리소스가 성공적으로 수정되었습니다.",
+              "data": {
+                "likeCount": 0
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "PATCH",
+          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM",
+          "input": {
+            "title": "Updated Title",
+            "content": "Updated Content"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "UPDATED",
+              "message": "리소스가 성공적으로 수정되었습니다.",
+              "data": {
+                "postId": "01KFFE4FHXZTSVG1NBXHXSJ7AM",
+                "title": "Updated Title",
+                "content": "Updated Content",
+                "likeCount": 0,
+                "commentCount": 0,
+                "hits": 1,
+                "author": {
+                  "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                  "nickname": "writer",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-21T13:48:47.677445",
+                "updatedAt": "2026-01-21T13:48:47.684265"
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "h@t.com",
+            "password": "password123",
+            "nickname": "hacker"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "userId": "01KFFE4FJ6BB073HKMTNSZB4GE",
+                "email": "h@t.com",
+                "nickname": "hacker",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:47.919792",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "h@t.com",
+            "password": "password123"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "userId": "01KFFE4FJ6BB073HKMTNSZB4GE",
+                "email": "h@t.com",
+                "nickname": "hacker",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:47.919792",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "PATCH",
+          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM",
+          "input": {
+            "title": "Hacked",
+            "content": "Hacked Content"
+          },
+          "output": {
+            "status_code": 403,
+            "body": {
+              "code": "FORBIDDEN",
+              "message": "권한이 없습니다.",
+              "details": {
+                "resource": "게시글",
+                "id": null
+              }
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "p@t.com",
+            "password": "password123"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                "email": "p@t.com",
+                "nickname": "writer",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:47.435541",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "DELETE",
+          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "DELETED",
+              "message": "리소스가 성공적으로 삭제되었습니다.",
+              "data": {
+                "postId": "01KFFE4FHXZTSVG1NBXHXSJ7AM",
+                "message": "게시글이 삭제되었습니다"
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM",
+          "input": null,
+          "output": {
+            "status_code": 404,
+            "body": {
+              "code": "POST_NOT_FOUND",
+              "message": "게시글을 찾을 수 없습니다.",
+              "details": {
+                "resource": "게시글",
+                "id": "01KFFE4FHXZTSVG1NBXHXSJ7AM"
+              }
+            }
+          }
+        }
+      ],
+      "message": null
+    },
+    {
+      "nodeid": "Week3/test/test_api.py::test_comment_lifecycle_and_cache",
+      "status": "passed",
+      "duration": 0.5046547090005333,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "c@t.com",
+            "password": "password123",
+            "nickname": "comm"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                "email": "c@t.com",
+                "nickname": "comm",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:48.652371",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "c@t.com",
+            "password": "password123"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                "email": "c@t.com",
+                "nickname": "comm",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:48.652371",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts",
+          "input": {
+            "title": "Post",
+            "content": "Content"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "postId": "01KFFE4GR0MDTPGV85XT9HN3HZ",
+                "title": "Post",
+                "content": "Content",
+                "likeCount": 0,
+                "commentCount": 0,
+                "hits": 0,
+                "author": {
+                  "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                  "nickname": "comm",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-21T13:48:48.896896",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts/01KFFE4GR0MDTPGV85XT9HN3HZ/comments",
+          "input": {
+            "content": "First Comment"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "commentId": "01KFFE4GRBN977YQ9DK7DM3WZY"
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "url": "/v1/posts/01KFFE4GR0MDTPGV85XT9HN3HZ",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "postId": "01KFFE4GR0MDTPGV85XT9HN3HZ",
+                "title": "Post",
+                "content": "Content",
+                "likeCount": 0,
+                "commentCount": 1,
+                "hits": 1,
+                "author": {
+                  "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                  "nickname": "comm",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-21T13:48:48.896896",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "PATCH",
+          "url": "/v1/posts/01KFFE4GR0MDTPGV85XT9HN3HZ/comments/01KFFE4GRBN977YQ9DK7DM3WZY",
+          "input": {
+            "content": "Updated Comment"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "UPDATED",
+              "message": "리소스가 성공적으로 수정되었습니다.",
+              "data": {
+                "commentId": "01KFFE4GRBN977YQ9DK7DM3WZY",
+                "postId": "01KFFE4GR0MDTPGV85XT9HN3HZ",
+                "content": "Updated Comment",
+                "author": {
+                  "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                  "nickname": "comm",
+                  "profileImageUrl": null
+                },
+                "createdAt": "2026-01-21T13:48:48.907098",
+                "updatedAt": "2026-01-21T13:48:48.911948"
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "DELETE",
+          "url": "/v1/posts/01KFFE4GR0MDTPGV85XT9HN3HZ/comments/01KFFE4GRBN977YQ9DK7DM3WZY",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "DELETED",
+              "message": "리소스가 성공적으로 삭제되었습니다.",
+              "data": {
+                "commentId": "01KFFE4GRBN977YQ9DK7DM3WZY",
+                "message": "댓글이 삭제되었습니다"
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "url": "/v1/posts/01KFFE4GR0MDTPGV85XT9HN3HZ",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "postId": "01KFFE4GR0MDTPGV85XT9HN3HZ",
+                "title": "Post",
+                "content": "Content",
+                "likeCount": 0,
+                "commentCount": 0,
+                "hits": 2,
+                "author": {
+                  "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                  "nickname": "comm",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-21T13:48:48.896896",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        }
+      ],
+      "message": null
+    },
+    {
+      "nodeid": "Week3/test/test_api.py::test_image_upload_and_directory_creation",
+      "status": "passed",
+      "duration": 0.48167712499889603,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "f@t.com",
+            "password": "password123",
+            "nickname": "file"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "리소스가 성공적으로 생성되었습니다.",
+              "data": {
+                "userId": "01KFFE4GRN4PNJA3PJGH735G1E",
+                "email": "f@t.com",
+                "nickname": "file",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:49.155538",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "f@t.com",
+            "password": "password123"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "요청이 성공적으로 처리되었습니다.",
+              "data": {
+                "userId": "01KFFE4GRN4PNJA3PJGH735G1E",
+                "email": "f@t.com",
+                "nickname": "file",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-21T13:48:49.155538",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/users/me/profile-image",
+          "input": "Files: ['profileImage']",
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "UPDATED",
+              "message": "리소스가 성공적으로 수정되었습니다.",
+              "data": {
+                "profileImageUrl": "/public/image/profile/336eee3c-36d5-4017-983b-26c431b5e0ad.png"
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts/image",
+          "input": "Files: ['postFile']",
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "UPDATED",
+              "message": "리소스가 성공적으로 수정되었습니다.",
+              "data": {
+                "postFileUrl": "/public/image/post/dd1521c3-5109-4ef0-a3f0-b569814e1bba.jpg"
+              },
+              "details": null
+            }
+          }
+        }
+      ],
+      "message": null
+    }
+  ]
+}

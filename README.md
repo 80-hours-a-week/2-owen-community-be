@@ -1,4 +1,4 @@
-# Owen Community Backend
+# AWS AI School 2기 Backend
 
 FastAPI 기반의 고성능 커뮤니티 백엔드 API입니다. 실무 수준의 운영 안정성과 성능 최적화를 목표로 **Router-Controller-Model-Schema** 아키텍처를 따르며, 최신 백엔드 엔지니어링 패턴이 적용되어 있습니다.
 
