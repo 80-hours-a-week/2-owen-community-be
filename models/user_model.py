@@ -1,109 +1,144 @@
 from typing import Dict, Optional, List, Union
 from datetime import datetime
-from uuid import UUID, uuid4
+import bcrypt
+from utils.id_utils import generate_id
 
 
 class UserModel:
     """사용자 데이터 관리 Model"""
 
     def __init__(self):
-        # 메모리 기반 사용자 저장소 (Key를 문자열로 관리)
-        self.users_db: Dict[str, Dict] = {}
+        # 메모리 기반 사용자 저장소 (Key: userId)
+        self.usersDb: Dict[str, Dict] = {}
+        # 빠른 조회를 위한 매핑 (O(1))
+        self.emailMap: Dict[str, str] = {}  # {email: userId}
+        self.nicknameMap: Dict[str, str] = {}  # {nickname: userId}
 
-    def _normalize_id(self, id_val: Union[UUID, str]) -> str:
-        """ID 정규화"""
-        if isinstance(id_val, UUID):
-            return str(id_val)
+    def _normalizeId(self, idVal: Union[str, any]) -> str:
+        """ID 정규화 (문자열로 변환)"""
+        return str(idVal)
+
+    def hashPassword(self, password: str) -> str:
+        """비밀번호 해싱 (bcrypt 직접 사용)"""
+        salt = bcrypt.gensalt()
+        return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+
+    def verifyPassword(self, plainPassword: str, hashedPassword: str) -> bool:
+        """비밀번호 검증 (bcrypt 직접 사용)"""
         try:
-            UUID(id_val)
-            return id_val
-        except (ValueError, AttributeError):
-            raise ValueError(f"Invalid UUID format: {id_val}")
+            return bcrypt.checkpw(plainPassword.encode('utf-8'), hashedPassword.encode('utf-8'))
+        except Exception:
+            return False
 
-    def get_next_user_id(self) -> str:
-        """다음 사용자 ID 생성"""
-        return str(uuid4())
+    def clear(self):
+        """저장소 초기화 (테스트용)"""
+        self.usersDb.clear()
+        self.emailMap.clear()
+        self.nicknameMap.clear()
 
-    def create_user(self, email: str, password: str, nickname: str, profile_image_url: Optional[str] = None) -> Dict:
+    def getNextUserId(self) -> str:
+        """다음 사용자 ID 생성 (ULID)"""
+        return generate_id()
+
+    def createUser(self, email: str, password: str, nickname: str, profileImageUrl: Optional[str] = None) -> Dict:
         """사용자 생성"""
-        user_id = self.get_next_user_id()
+        userId = self.getNextUserId()
+        hashedPassword = self.hashPassword(password)
 
-        user_data = {
-            "user_id": user_id,
+        userData = {
+            "userId": userId,
             "email": email,
-            "password": password,
+            "password": hashedPassword,
             "nickname": nickname,
-            "profile_image_url": profile_image_url,
-            "created_at": datetime.now().isoformat(),
-            "updated_at": None
+            "profileImageUrl": profileImageUrl,
+            "createdAt": datetime.now().isoformat(),
+            "updatedAt": None
         }
 
-        self.users_db[user_id] = user_data
-        return user_data.copy()
+        self.usersDb[userId] = userData
+        self.emailMap[email] = userId
+        self.nicknameMap[nickname] = userId
+        return userData.copy()
 
-    def get_user_by_id(self, user_id: Union[UUID, str]) -> Optional[Dict]:
+    def getUserById(self, userId: Union[str, any]) -> Optional[Dict]:
         """ID로 사용자 조회"""
-        try:
-            user_id_str = self._normalize_id(user_id)
-            return self.users_db.get(user_id_str)
-        except ValueError:
-            return None
+        userIdStr = self._normalizeId(userId)
+        return self.usersDb.get(userIdStr)
 
-    def get_user_by_email(self, email: str) -> Optional[Dict]:
-        """이메일로 사용자 조회"""
-        for user in self.users_db.values():
-            if user["email"] == email:
-                return user
+    def getUserByEmail(self, email: str) -> Optional[Dict]:
+        """이메일로 사용자 조회 (O(1))"""
+        userId = self.emailMap.get(email)
+        if userId:
+            return self.usersDb.get(userId)
         return None
 
-    def email_exists(self, email: str) -> bool:
-        """이메일 중복 체크"""
-        return self.get_user_by_email(email) is not None
+    def emailExists(self, email: str) -> bool:
+        """이메일 중복 체크 (O(1))"""
+        return email in self.emailMap
 
-    def nickname_exists(self, nickname: str) -> bool:
-        """닉네임 중복 체크"""
-        for user in self.users_db.values():
-            if user["nickname"] == nickname:
-                return True
-        return False
+    def nicknameExists(self, nickname: str) -> bool:
+        """닉네임 중복 체크 (O(1))"""
+        return nickname in self.nicknameMap
 
-    def update_user(self, user_id: Union[UUID, str], update_data: Dict) -> Optional[Dict]:
+    def updateUser(self, userId: Union[str, any], updateData: Dict) -> Optional[Dict]:
         """사용자 정보 수정"""
-        try:
-            user_id_str = self._normalize_id(user_id)
-            if user_id_str not in self.users_db:
-                return None
-
-            user = self.users_db[user_id_str]
-            allowed_fields = ["nickname", "profile_image_url", "password"]
-            for field in allowed_fields:
-                if field in update_data:
-                    user[field] = update_data[field]
-
-            user["updated_at"] = datetime.now().isoformat()
-            return user.copy()
-        except ValueError:
+        userIdStr = self._normalizeId(userId)
+        if userIdStr not in self.usersDb:
             return None
 
-    def delete_user(self, user_id: Union[UUID, str]) -> bool:
+        user = self.usersDb[userIdStr]
+        
+        # 닉네임 변경 시 매핑 업데이트
+        if "nickname" in updateData and updateData["nickname"] != user["nickname"]:
+            oldNickname = user["nickname"]
+            newNickname = updateData["nickname"]
+            if oldNickname in self.nicknameMap:
+                del self.nicknameMap[oldNickname]
+            self.nicknameMap[newNickname] = userIdStr
+            user["nickname"] = newNickname
+
+        # 이메일 변경 시 매핑 업데이트 (현재는 지원하지 않으나 확장성 위해)
+        if "email" in updateData and updateData["email"] != user["email"]:
+            oldEmail = user["email"]
+            newEmail = updateData["email"]
+            if oldEmail in self.emailMap:
+                del self.emailMap[oldEmail]
+            self.emailMap[newEmail] = userIdStr
+            user["email"] = newEmail
+
+        # 비밀번호 변경 시 해싱 적용
+        if "password" in updateData:
+            user["password"] = self.hashPassword(updateData["password"])
+
+        if "profileImageUrl" in updateData:
+            user["profileImageUrl"] = updateData["profileImageUrl"]
+
+        user["updatedAt"] = datetime.now().isoformat()
+        return user.copy()
+
+    def deleteUser(self, userId: Union[str, any]) -> bool:
         """사용자 삭제"""
-        try:
-            user_id_str = self._normalize_id(user_id)
-            if user_id_str in self.users_db:
-                del self.users_db[user_id_str]
-                return True
-            return False
-        except ValueError:
-            return False
+        userIdStr = self._normalizeId(userId)
+        if userIdStr in self.usersDb:
+            user = self.usersDb[userIdStr]
+            # 매핑에서도 삭제
+            if user["email"] in self.emailMap:
+                del self.emailMap[user["email"]]
+            if user["nickname"] in self.nicknameMap:
+                del self.nicknameMap[user["nickname"]]
+            
+            del self.usersDb[userIdStr]
+            return True
+        return False
 
-    def get_all_users(self) -> List[Dict]:
+    def getAllUsers(self) -> List[Dict]:
         """모든 사용자 조회"""
-        return list(self.users_db.values())
+        return list(self.usersDb.values())
 
-    def authenticate_user(self, email: str, password: str) -> Optional[Dict]:
+    def authenticateUser(self, email: str, password: str) -> Optional[Dict]:
         """사용자 인증"""
-        user = self.get_user_by_email(email)
-        if user and user["password"] == password:
+        user = self.getUserByEmail(email)
+        if user and self.verifyPassword(password, user["password"]):
             return user
         return None
 

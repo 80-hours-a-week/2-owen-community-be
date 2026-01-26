@@ -1,110 +1,109 @@
 from typing import List, Dict, Union
-from uuid import UUID
-from models import comment_model, post_model
-from utils.exceptions import NotFoundError, ForbiddenError, ValidationError
+from models.comment_model import comment_model
+from models.post_model import post_model
+from models.user_model import user_model
+from utils.exceptions import APIError
 from utils.error_codes import ErrorCode
+from schemas import CommentCreateRequest, CommentUpdateRequest, CommentResponse, CommentAuthor, ResourceError
 
-# --- Controller (Business Logic) ---
+
 class CommentController:
     """댓글 관련 비즈니스 로직"""
 
-    def __init__(self):
-        pass
+    def _formatComment(self, comment: Dict) -> CommentResponse:
+        """Comment 데이터를 API 응답 규격에 맞게 변환"""
+        author = user_model.getUserById(comment["userId"])
+        
+        # 최신 닉네임 우선 사용
+        nickname = author.get("nickname") if author else comment["userNickname"]
+        
+        author_data = CommentAuthor(
+            userId=comment["userId"],
+            nickname=nickname,
+            profileImageUrl=author.get("profileImageUrl") if author else None
+        )
 
-    def get_comments_by_post(self, post_id: Union[UUID, str]) -> List[Dict]:
+        return CommentResponse(
+            commentId=comment["commentId"],
+            postId=comment["postId"],
+            content=comment["content"],
+            author=author_data,
+            createdAt=comment["createdAt"],
+            updatedAt=comment.get("updatedAt")
+        )
+
+    def getCommentsByPost(self, postId: str) -> List[CommentResponse]:
         """특정 게시글의 댓글 목록 조회"""
-        # 게시글 존재 여부 확인
-        post = post_model.get_post_by_id(post_id)
+        post = post_model.getPostById(postId)
         if not post:
-            raise NotFoundError("게시글")
+            raise APIError(ErrorCode.POST_NOT_FOUND, ResourceError(resource="게시글", id=postId))
 
-        # 댓글 목록 조회
-        comments = comment_model.get_comments_by_post(post_id)
-        return comments
+        comments = comment_model.getCommentsByPost(postId)
+        return [self._formatComment(c) for c in comments]
 
-    def create_comment(self, post_id: Union[UUID, str], req: Dict, user: Dict) -> Dict:
+    def createComment(self, postId: str, req: CommentCreateRequest, user: Dict) -> CommentResponse:
         """댓글 작성"""
-        # 게시글 존재 여부 확인
-        post = post_model.get_post_by_id(post_id)
+        post = post_model.getPostById(postId)
         if not post:
-            raise NotFoundError("게시글")
+            raise APIError(ErrorCode.POST_NOT_FOUND, ResourceError(resource="게시글", id=postId))
 
-        # 입력값 검증
-        content = req.get("content", "").strip()
-        if not content:
-            raise ValidationError(ErrorCode.EMPTY_CONTENT, {"field": "content"})
-
-        # 댓글 생성
-        comment_data = comment_model.create_comment(
-            post_id=post_id,
-            user_id=user["user_id"],
-            user_nickname=user["nickname"],
-            content=content
+        comment_data = comment_model.createComment(
+            postId=postId,
+            userId=user["userId"],
+            userNickname=user["nickname"],
+            content=req.content
         )
+        
+        # 게시글의 댓글 수 캐시 업데이트
+        post_model.updateCommentCount(postId, 1)
 
-        return comment_data
+        return self._formatComment(comment_data)
 
-    def update_comment(self, post_id: Union[UUID, str], comment_id: Union[UUID, str], req: Dict, user: Dict) -> Dict:
+    def updateComment(self, postId: str, commentId: str, req: CommentUpdateRequest, user: Dict) -> CommentResponse:
         """댓글 수정"""
-        # 게시글 존재 여부 확인
-        post = post_model.get_post_by_id(post_id)
+        post = post_model.getPostById(postId)
         if not post:
-            raise NotFoundError("게시글")
+            raise APIError(ErrorCode.POST_NOT_FOUND, ResourceError(resource="게시글", id=postId))
 
-        # 댓글 존재 여부 확인
-        comment = comment_model.get_comment_by_id(comment_id)
+        comment = comment_model.getCommentById(commentId)
         if not comment:
-            raise NotFoundError("댓글")
+            raise APIError(ErrorCode.COMMENT_NOT_FOUND, ResourceError(resource="댓글", id=commentId))
 
-        # 댓글이 해당 게시글에 속하는지 확인 (문자열로 비교)
-        if str(comment["post_id"]) != str(post_id):
-            raise NotFoundError("댓글")
+        if str(comment["postId"]) != postId:
+            raise APIError(ErrorCode.COMMENT_NOT_FOUND, ResourceError(resource="댓글", id=commentId))
 
-        # 권한 확인 (작성자만 수정 가능)
-        if str(comment["user_id"]) != str(user["user_id"]):
-            raise ForbiddenError(ErrorCode.NOT_OWNER, {"resource": "댓글"})
+        if str(comment["userId"]) != str(user["userId"]):
+            raise APIError(ErrorCode.FORBIDDEN, ResourceError(resource="댓글"))
 
-        # 입력값 검증
-        content = req.get("content", "").strip()
-        if not content:
-            raise ValidationError(ErrorCode.EMPTY_CONTENT, {"field": "content"})
-
-        # 댓글 수정
-        updated_comment = comment_model.update_comment(
-            comment_id=comment_id,
-            content=content
+        updated_comment = comment_model.updateComment(
+            commentId=commentId,
+            content=req.content
         )
 
-        if not updated_comment:
-            raise NotFoundError("댓글")
+        return self._formatComment(updated_comment)
 
-        return updated_comment
-
-    def delete_comment(self, post_id: Union[UUID, str], comment_id: Union[UUID, str], user: Dict) -> Dict:
+    def deleteComment(self, postId: str, commentId: str, user: Dict) -> Dict:
         """댓글 삭제"""
-        # 게시글 존재 여부 확인
-        post = post_model.get_post_by_id(post_id)
+        post = post_model.getPostById(postId)
         if not post:
-            raise NotFoundError("게시글")
+            raise APIError(ErrorCode.POST_NOT_FOUND, ResourceError(resource="게시글", id=postId))
 
-        # 댓글 존재 여부 확인
-        comment = comment_model.get_comment_by_id(comment_id)
+        comment = comment_model.getCommentById(commentId)
         if not comment:
-            raise NotFoundError("댓글")
+            raise APIError(ErrorCode.COMMENT_NOT_FOUND, ResourceError(resource="댓글", id=commentId))
 
-        # 댓글이 해당 게시글에 속하는지 확인
-        if str(comment["post_id"]) != str(post_id):
-            raise NotFoundError("댓글")
+        if str(comment["postId"]) != postId:
+            raise APIError(ErrorCode.COMMENT_NOT_FOUND, ResourceError(resource="댓글", id=commentId))
 
-        # 권한 확인 (작성자만 삭제 가능)
-        if str(comment["user_id"]) != str(user["user_id"]):
-            raise ForbiddenError(ErrorCode.NOT_OWNER, {"resource": "댓글"})
+        if str(comment["userId"]) != str(user["userId"]):
+            raise APIError(ErrorCode.FORBIDDEN, ResourceError(resource="댓글"))
 
-        # 댓글 삭제
-        comment_model.delete_comment(comment_id)
+        comment_model.deleteComment(commentId)
+        
+        # 게시글의 댓글 수 캐시 업데이트
+        post_model.updateCommentCount(postId, -1)
 
         return comment
 
 
-# 컨트롤러 인스턴스 생성
 comment_controller = CommentController()
