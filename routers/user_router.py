@@ -19,49 +19,49 @@ async def get_my_info(user: Dict = Depends(get_current_user)):
 @router.patch("/me", response_model=StandardResponseSchema[UserResponse], status_code=status.HTTP_200_OK)
 async def update_my_info(req: UserUpdateRequest, user: Dict = Depends(get_current_user)):
     """현재 로그인한 사용자 정보 수정"""
-    data = user_controller.updateUser(user["userId"], req, user)
+    data = await user_controller.updateUser(user["userId"], req, user)
     return StandardResponse.success(SuccessCode.UPDATED, data)
 
 
 @router.patch("/password", response_model=StandardResponseSchema[Dict], status_code=status.HTTP_200_OK)
 async def change_my_password(req: PasswordChangeRequest, user: Dict = Depends(get_current_user)):
     """비밀번호 변경 (현재 사용자)"""
-    user_controller.changePassword(user["userId"], req, user)
+    await user_controller.changePassword(user["userId"], req, user)
     return StandardResponse.success(SuccessCode.UPDATED, None)
 
 
 @router.delete("/me", response_model=StandardResponseSchema[Dict], status_code=status.HTTP_200_OK)
 async def delete_my_account(request: Request, user: Dict = Depends(get_current_user)):
     """회원 탈퇴 (현재 사용자)"""
-    user_controller.deleteUser(user["userId"], user, request)
+    await user_controller.deleteUser(user["userId"], user, request)
     return StandardResponse.success(SuccessCode.SUCCESS, None)
 
 
 @router.get("/{userId}", response_model=StandardResponseSchema[UserResponse], status_code=status.HTTP_200_OK)
 async def get_user_info(userId: str):
     """특정 사용자 정보 조회"""
-    data = user_controller.getUserById(userId)
+    data = await user_controller.getUserById(userId)
     return StandardResponse.success(SuccessCode.SUCCESS, data)
 
 
 @router.patch("/{userId}", response_model=StandardResponseSchema[UserResponse], status_code=status.HTTP_200_OK)
 async def update_user_info(userId: str, req: UserUpdateRequest, user: Dict = Depends(get_current_user)):
     """특정 사용자 정보 수정 (본인만 가능)"""
-    data = user_controller.updateUser(userId, req, user)
+    data = await user_controller.updateUser(userId, req, user)
     return StandardResponse.success(SuccessCode.UPDATED, data)
 
 
 @router.patch("/{userId}/password", response_model=StandardResponseSchema[Dict], status_code=status.HTTP_200_OK)
 async def change_user_password(userId: str, req: PasswordChangeRequest, user: Dict = Depends(get_current_user)):
     """비밀번호 변경 (본인만 가능)"""
-    user_controller.changePassword(userId, req, user)
+    await user_controller.changePassword(userId, req, user)
     return StandardResponse.success(SuccessCode.UPDATED, None)
 
 
 @router.delete("/{userId}", response_model=StandardResponseSchema[Dict], status_code=status.HTTP_200_OK)
 async def delete_user_account(userId: str, request: Request, user: Dict = Depends(get_current_user)):
     """회원 탈퇴 (본인만 가능)"""
-    user_controller.deleteUser(userId, user, request)
+    await user_controller.deleteUser(userId, user, request)
     return StandardResponse.success(SuccessCode.SUCCESS, None)
 
 

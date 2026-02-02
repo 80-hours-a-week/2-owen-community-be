@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 import os
 import random
 import sys
@@ -8,7 +9,7 @@ from typing import Iterable, List, Sequence, Tuple
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import bcrypt
-import mysql.connector
+import aiomysql
 from faker import Faker
 
 from config import settings
@@ -20,25 +21,25 @@ def _chunks(items: Sequence[Tuple], size: int) -> Iterable[List[Tuple]]:
         yield list(items[idx:idx + size])
 
 
-def _connect():
-    return mysql.connector.connect(
+async def _connect():
+    return await aiomysql.connect(
         host=settings.db_host,
         port=settings.db_port,
         user=settings.db_user,
         password=settings.db_password,
-        database=settings.db_name,
+        db=settings.db_name,
         autocommit=False,
     )
 
 
-def _maybe_clear(cursor, clear: bool):
+async def _maybe_clear(cursor, clear: bool):
     if not clear:
         return
-    cursor.execute("DELETE FROM post_likes")
-    cursor.execute("DELETE FROM comments")
-    cursor.execute("DELETE FROM posts")
-    cursor.execute("DELETE FROM sessions")
-    cursor.execute("DELETE FROM users")
+    await cursor.execute("DELETE FROM post_likes")
+    await cursor.execute("DELETE FROM comments")
+    await cursor.execute("DELETE FROM posts")
+    await cursor.execute("DELETE FROM sessions")
+    await cursor.execute("DELETE FROM users")
 
 
 def _get_image_files(directory: str) -> List[str]:
@@ -47,14 +48,14 @@ def _get_image_files(directory: str) -> List[str]:
     return [f for f in os.listdir(directory) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp'))]
 
 
-def _insert_users(cursor, faker: Faker, total: int, batch_size: int) -> List[str]:
+async def _insert_users(cursor, faker: Faker, total: int, batch_size: int) -> List[str]:
     user_ids: List[str] = []
     hashed_password = bcrypt.hashpw(b"password1234!", bcrypt.gensalt()).decode("utf-8")
-    
+
     # 프로필 이미지 목록 가져오기
     profile_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public", "image", "profile")
     profile_images = _get_image_files(profile_dir)
-    
+
     insert_sql = """
         INSERT INTO users (user_id, email, password, nickname, profile_image_url, created_at)
         VALUES (%s, %s, %s, %s, %s, NOW())
@@ -66,20 +67,20 @@ def _insert_users(cursor, faker: Faker, total: int, batch_size: int) -> List[str
             user_id = generate_id()
             email = faker.unique.email()
             nickname = faker.unique.user_name()[:50]
-            
+
             # 30% 확률로 프로필 이미지 할당
             profile_image_url = None
             if profile_images and random.random() < 0.3:
                 img_name = random.choice(profile_images)
                 profile_image_url = f"/public/image/profile/{img_name}"
-                
+
             rows.append((user_id, email, hashed_password, nickname, profile_image_url))
             user_ids.append(user_id)
-        cursor.executemany(insert_sql, rows)
+        await cursor.executemany(insert_sql, rows)
     return user_ids
 
 
-def _insert_posts(
+async def _insert_posts(
     cursor,
     faker: Faker,
     user_ids: Sequence[str],
@@ -87,11 +88,11 @@ def _insert_posts(
     batch_size: int,
 ) -> List[str]:
     post_ids: List[str] = []
-    
+
     # 게시글 이미지 목록 가져오기
     post_img_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public", "image", "post")
     post_images = _get_image_files(post_img_dir)
-    
+
     insert_sql = """
         INSERT INTO posts (post_id, user_id, title, content, post_image_url, hits, comment_count, created_at)
         VALUES (%s, %s, %s, %s, %s, %s, 0, NOW())
@@ -105,20 +106,20 @@ def _insert_posts(
             title = faker.sentence(nb_words=8)[:300]
             content = faker.paragraph(nb_sentences=5)
             hits = random.randint(0, 500)
-            
+
             # 40% 확률로 게시글 이미지 할당
             post_image_url = None
             if post_images and random.random() < 0.4:
                 img_name = random.choice(post_images)
                 post_image_url = f"/public/image/post/{img_name}"
-                
+
             rows.append((post_id, user_id, title, content, post_image_url, hits))
             post_ids.append(post_id)
-        cursor.executemany(insert_sql, rows)
+        await cursor.executemany(insert_sql, rows)
     return post_ids
 
 
-def _insert_comments(
+async def _insert_comments(
     cursor,
     faker: Faker,
     user_ids: Sequence[str],
@@ -140,12 +141,12 @@ def _insert_comments(
             user_id = random.choice(user_ids)
             content = faker.sentence(nb_words=18)
             rows.append((comment_id, post_id, user_id, content))
-        cursor.executemany(insert_sql, rows)
+        await cursor.executemany(insert_sql, rows)
         inserted += batch
 
 
-def _sync_comment_counts(cursor):
-    cursor.execute(
+async def _sync_comment_counts(cursor):
+    await cursor.execute(
         """
         UPDATE posts p
         LEFT JOIN (
@@ -160,7 +161,7 @@ def _sync_comment_counts(cursor):
     )
 
 
-def _insert_admin(cursor):
+async def _insert_admin(cursor):
     admin_id = '01JADMIN000000000000000000'
     admin_email = 'admin@test.com'
     # 'admin' 비밀번호에 대한 bcrypt 해시 (seed.sql과 동일)
@@ -171,10 +172,10 @@ def _insert_admin(cursor):
         INSERT IGNORE INTO users (user_id, email, password, nickname, profile_image_url, created_at)
         VALUES (%s, %s, %s, %s, %s, NOW())
     """
-    cursor.execute(insert_sql, (admin_id, admin_email, admin_password, admin_nickname, None))
+    await cursor.execute(insert_sql, (admin_id, admin_email, admin_password, admin_nickname, None))
 
 
-def main():
+async def main():
     parser = argparse.ArgumentParser(description="Generate and insert dummy data.")
     parser.add_argument("--users", type=int, default=10_000)
     parser.add_argument("--posts", type=int, default=40_000)
@@ -192,30 +193,30 @@ def main():
     faker = Faker("en_US")
     faker.seed_instance(args.seed)
 
-    conn = _connect()
+    conn = await _connect()
     try:
-        cursor = conn.cursor()
-        _maybe_clear(cursor, args.clear)
+        async with conn.cursor() as cursor:
+            await _maybe_clear(cursor, args.clear)
 
-        _insert_admin(cursor)
-        user_ids = _insert_users(cursor, faker, args.users, args.batch_size)
-        conn.commit()
-        print(f"Inserted users: {len(user_ids)}")
+            await _insert_admin(cursor)
+            user_ids = await _insert_users(cursor, faker, args.users, args.batch_size)
+            await conn.commit()
+            print(f"Inserted users: {len(user_ids)}")
 
-        post_ids = _insert_posts(cursor, faker, user_ids, args.posts, args.batch_size)
-        conn.commit()
-        print(f"Inserted posts: {len(post_ids)}")
+            post_ids = await _insert_posts(cursor, faker, user_ids, args.posts, args.batch_size)
+            await conn.commit()
+            print(f"Inserted posts: {len(post_ids)}")
 
-        _insert_comments(cursor, faker, user_ids, post_ids, args.comments, args.batch_size)
-        conn.commit()
-        print(f"Inserted comments: {args.comments}")
+            await _insert_comments(cursor, faker, user_ids, post_ids, args.comments, args.batch_size)
+            await conn.commit()
+            print(f"Inserted comments: {args.comments}")
 
-        _sync_comment_counts(cursor)
-        conn.commit()
-        print("Synced comment_count for posts.")
+            await _sync_comment_counts(cursor)
+            await conn.commit()
+            print("Synced comment_count for posts.")
     finally:
         conn.close()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

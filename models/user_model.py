@@ -41,20 +41,20 @@ class UserModel:
         except Exception:
             return False
 
-    def clear(self):
+    async def clear(self):
         """저장소 초기화 (테스트용)"""
-        execute("DELETE FROM users")
+        await execute("DELETE FROM users")
 
     def getNextUserId(self) -> str:
         """다음 사용자 ID 생성 (ULID)"""
         return generate_id()
 
-    def createUser(self, email: str, password: str, nickname: str, profileImageUrl: Optional[str] = None) -> Dict:
+    async def createUser(self, email: str, password: str, nickname: str, profileImageUrl: Optional[str] = None) -> Dict:
         """사용자 생성"""
         userId = self.getNextUserId()
         hashedPassword = self.hashPassword(password)
 
-        execute(
+        await execute(
             """
             INSERT INTO users (user_id, email, password, nickname, profile_image_url, created_at)
             VALUES (%s, %s, %s, %s, %s, NOW())
@@ -62,12 +62,12 @@ class UserModel:
             (userId, email, hashedPassword, nickname, profileImageUrl),
         )
 
-        return self.getUserById(userId)
+        return await self.getUserById(userId)
 
-    def getUserById(self, userId: Union[str, any]) -> Optional[Dict]:
+    async def getUserById(self, userId: Union[str, any]) -> Optional[Dict]:
         """ID로 사용자 조회"""
         userIdStr = self._normalizeId(userId)
-        row = fetch_one(
+        row = await fetch_one(
             """
             SELECT user_id, email, password, nickname, profile_image_url, created_at, updated_at
             FROM users
@@ -77,9 +77,9 @@ class UserModel:
         )
         return self._row_to_user(row)
 
-    def getUserByEmail(self, email: str) -> Optional[Dict]:
+    async def getUserByEmail(self, email: str) -> Optional[Dict]:
         """이메일로 사용자 조회"""
-        row = fetch_one(
+        row = await fetch_one(
             """
             SELECT user_id, email, password, nickname, profile_image_url, created_at, updated_at
             FROM users
@@ -89,23 +89,23 @@ class UserModel:
         )
         return self._row_to_user(row)
 
-    def emailExists(self, email: str) -> bool:
+    async def emailExists(self, email: str) -> bool:
         """이메일 중복 체크"""
-        row = fetch_one(
+        row = await fetch_one(
             "SELECT 1 FROM users WHERE email = %s AND deleted_at IS NULL",
             (email,),
         )
         return row is not None
 
-    def nicknameExists(self, nickname: str) -> bool:
+    async def nicknameExists(self, nickname: str) -> bool:
         """닉네임 중복 체크"""
-        row = fetch_one(
+        row = await fetch_one(
             "SELECT 1 FROM users WHERE nickname = %s AND deleted_at IS NULL",
             (nickname,),
         )
         return row is not None
 
-    def updateUser(self, userId: Union[str, any], updateData: Dict) -> Optional[Dict]:
+    async def updateUser(self, userId: Union[str, any], updateData: Dict) -> Optional[Dict]:
         """사용자 정보 수정"""
         userIdStr = self._normalizeId(userId)
         fields = []
@@ -130,25 +130,25 @@ class UserModel:
         if fields:
             fields.append("updated_at = NOW()")
             params.append(userIdStr)
-            execute(
+            await execute(
                 f"UPDATE users SET {', '.join(fields)} WHERE user_id = %s AND deleted_at IS NULL",
                 params,
             )
 
-        return self.getUserById(userIdStr)
+        return await self.getUserById(userIdStr)
 
-    def deleteUser(self, userId: Union[str, any]) -> bool:
+    async def deleteUser(self, userId: Union[str, any]) -> bool:
         """사용자 삭제"""
         userIdStr = self._normalizeId(userId)
-        affected = execute(
+        affected = await execute(
             "UPDATE users SET deleted_at = NOW() WHERE user_id = %s AND deleted_at IS NULL",
             (userIdStr,),
         )
         return affected > 0
 
-    def getAllUsers(self) -> List[Dict]:
+    async def getAllUsers(self) -> List[Dict]:
         """모든 사용자 조회"""
-        rows = fetch_all(
+        rows = await fetch_all(
             """
             SELECT user_id, email, password, nickname, profile_image_url, created_at, updated_at
             FROM users
@@ -157,9 +157,9 @@ class UserModel:
         )
         return [self._row_to_user(row) for row in rows]
 
-    def authenticateUser(self, email: str, password: str) -> Optional[Dict]:
+    async def authenticateUser(self, email: str, password: str) -> Optional[Dict]:
         """사용자 인증"""
-        user = self.getUserByEmail(email)
+        user = await self.getUserByEmail(email)
         if user and self.verifyPassword(password, user["password"]):
             return user
         return None

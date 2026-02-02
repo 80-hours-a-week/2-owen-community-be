@@ -12,6 +12,7 @@ from utils.middleware.db_session_middleware import DBSessionMiddleware
 from utils.middleware.request_id_middleware import RequestIDMiddleware, request_id_ctx
 from utils.middleware.access_log_middleware import AccessLogMiddleware
 from utils.errors.exception_handlers import register_exception_handlers
+from utils.database.db import init_pool, close_pool
 
 # 로깅 필터: 로그에 request_id 추가
 class RequestIDFilter(logging.Filter):
@@ -44,6 +45,15 @@ app = FastAPI(
     description="FastAPI 기반 커뮤니티 백엔드 API",
     version="1.0.0"
 )
+
+@app.on_event("startup")
+async def startup_event():
+    await init_pool()
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    await close_pool()
 
 # 정적 파일 서빙
 UPLOAD_DIR = "public"

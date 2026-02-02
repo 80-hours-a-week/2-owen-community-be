@@ -17,7 +17,7 @@ class DBSessionMiddleware(BaseHTTPMiddleware):
 
         clear_cookie = False
         if session_key:
-            row = fetch_one(
+            row = await fetch_one(
                 "SELECT data, expires_at FROM sessions WHERE session_key = %s AND expires_at > NOW()",
                 (session_key,),
             )
@@ -40,7 +40,10 @@ class DBSessionMiddleware(BaseHTTPMiddleware):
         if current_snapshot != request.state._session_snapshot:
             if not current_session:
                 if session_key:
-                    execute("DELETE FROM sessions WHERE session_key = %s", (session_key,))
+                    await execute(
+                        "DELETE FROM sessions WHERE session_key = %s",
+                        (session_key,),
+                    )
                 response.delete_cookie(settings.session_cookie_name)
                 return response
 
@@ -51,7 +54,7 @@ class DBSessionMiddleware(BaseHTTPMiddleware):
             data_json = json.dumps(current_session)
             user_id = current_session.get("userId")
 
-            execute(
+            await execute(
                 """
                 INSERT INTO sessions (session_key, user_id, data, expires_at, created_at)
                 VALUES (%s, %s, %s, %s, NOW())

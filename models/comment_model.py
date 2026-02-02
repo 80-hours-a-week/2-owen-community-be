@@ -28,15 +28,15 @@ class CommentModel:
             "updatedAt": self._format_datetime(row.get("updated_at")),
         }
 
-    def clear(self):
+    async def clear(self):
         """저장소 초기화 (테스트용)"""
-        execute("DELETE FROM comments")
+        await execute("DELETE FROM comments")
 
     def getNextCommentId(self) -> str:
         """다음 댓글 ID 생성 (ULID)"""
         return generate_id()
 
-    def createComment(
+    async def createComment(
         self,
         postId: Union[str, any],
         userId: Union[str, any],
@@ -48,7 +48,7 @@ class CommentModel:
         postIdStr = self._normalizeId(postId)
         userIdStr = self._normalizeId(userId)
 
-        execute(
+        await execute(
             """
             INSERT INTO comments (comment_id, post_id, user_id, content, created_at)
             VALUES (%s, %s, %s, %s, NOW())
@@ -56,15 +56,15 @@ class CommentModel:
             (commentId, postIdStr, userIdStr, content),
         )
 
-        comment = self.getCommentById(commentId)
+        comment = await self.getCommentById(commentId)
         if comment:
             comment["userNickname"] = userNickname
         return comment
 
-    def getCommentsByPost(self, postId: Union[str, any]) -> List[Dict]:
+    async def getCommentsByPost(self, postId: Union[str, any]) -> List[Dict]:
         """특정 게시글의 모든 댓글 조회 (최신순)"""
         postIdStr = self._normalizeId(postId)
-        rows = fetch_all(
+        rows = await fetch_all(
             """
             SELECT
                 c.comment_id,
@@ -83,10 +83,10 @@ class CommentModel:
         )
         return [self._row_to_comment(row) for row in rows]
 
-    def getCommentById(self, commentId: Union[str, any]) -> Optional[Dict]:
+    async def getCommentById(self, commentId: Union[str, any]) -> Optional[Dict]:
         """ID로 댓글 조회"""
         commentIdStr = self._normalizeId(commentId)
-        row = fetch_one(
+        row = await fetch_one(
             """
             SELECT
                 c.comment_id,
@@ -104,10 +104,10 @@ class CommentModel:
         )
         return self._row_to_comment(row)
 
-    def updateComment(self, commentId: Union[str, any], content: str) -> Optional[Dict]:
+    async def updateComment(self, commentId: Union[str, any], content: str) -> Optional[Dict]:
         """댓글 수정"""
         commentIdStr = self._normalizeId(commentId)
-        execute(
+        await execute(
             """
             UPDATE comments
             SET content = %s, updated_at = NOW()
@@ -115,21 +115,21 @@ class CommentModel:
             """,
             (content, commentIdStr),
         )
-        return self.getCommentById(commentIdStr)
+        return await self.getCommentById(commentIdStr)
 
-    def deleteComment(self, commentId: Union[str, any]) -> bool:
+    async def deleteComment(self, commentId: Union[str, any]) -> bool:
         """댓글 삭제"""
         commentIdStr = self._normalizeId(commentId)
-        affected = execute(
+        affected = await execute(
             "UPDATE comments SET deleted_at = NOW() WHERE comment_id = %s AND deleted_at IS NULL",
             (commentIdStr,),
         )
         return affected > 0
 
-    def getCommentsByUser(self, userId: Union[str, any]) -> List[Dict]:
+    async def getCommentsByUser(self, userId: Union[str, any]) -> List[Dict]:
         """특정 사용자의 모든 댓글 조회"""
         userIdStr = self._normalizeId(userId)
-        rows = fetch_all(
+        rows = await fetch_all(
             """
             SELECT
                 c.comment_id,
@@ -148,27 +148,27 @@ class CommentModel:
         )
         return [self._row_to_comment(row) for row in rows]
 
-    def getCommentsCountByPost(self, postId: Union[str, any]) -> int:
+    async def getCommentsCountByPost(self, postId: Union[str, any]) -> int:
         """특정 게시글의 댓글 수 조회"""
         postIdStr = self._normalizeId(postId)
-        row = fetch_one(
+        row = await fetch_one(
             "SELECT COUNT(*) AS cnt FROM comments WHERE post_id = %s AND deleted_at IS NULL",
             (postIdStr,),
         )
         return row["cnt"] if row else 0
 
-    def deleteCommentsByPost(self, postId: Union[str, any]) -> int:
+    async def deleteCommentsByPost(self, postId: Union[str, any]) -> int:
         """특정 게시글의 모든 댓글 삭제"""
         postIdStr = self._normalizeId(postId)
-        affected = execute(
+        affected = await execute(
             "UPDATE comments SET deleted_at = NOW() WHERE post_id = %s AND deleted_at IS NULL",
             (postIdStr,),
         )
         return affected
 
-    def getTotalCommentsCount(self) -> int:
+    async def getTotalCommentsCount(self) -> int:
         """전체 댓글 수 조회"""
-        row = fetch_one("SELECT COUNT(*) AS cnt FROM comments WHERE deleted_at IS NULL")
+        row = await fetch_one("SELECT COUNT(*) AS cnt FROM comments WHERE deleted_at IS NULL")
         return row["cnt"] if row else 0
 
     def updateUserNickname(self, userId: str, newNickname: str) -> int:
