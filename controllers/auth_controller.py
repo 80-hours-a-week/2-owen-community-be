@@ -1,27 +1,27 @@
 from typing import Dict
 from fastapi import Request
 from models.user_model import user_model
-from utils.exceptions import APIError
-from utils.error_codes import ErrorCode
+from utils.errors.exceptions import APIError
+from utils.errors.error_codes import ErrorCode
 from schemas import SignupRequest, LoginRequest, UserResponse, FieldError
 
 
 class AuthController:
     """인증 관련 비즈니스 로직"""
 
-    def signup(self, req: SignupRequest) -> UserResponse:
+    async def signup(self, req: SignupRequest) -> UserResponse:
         """회원가입"""
-        if user_model.emailExists(req.email):
+        if await user_model.emailExists(req.email):
             raise APIError(ErrorCode.ALREADY_EXISTS, FieldError(field="email", value=req.email), message="이미 사용 중인 이메일입니다.")
-        if user_model.nicknameExists(req.nickname):
+        if await user_model.nicknameExists(req.nickname):
             raise APIError(ErrorCode.ALREADY_EXISTS, FieldError(field="nickname", value=req.nickname), message="이미 사용 중인 닉네임입니다.")
 
-        user = user_model.createUser(req.email, req.password, req.nickname, req.profileImageUrl)
+        user = await user_model.createUser(req.email, req.password, req.nickname, req.profileImageUrl)
         return UserResponse.model_validate(user)
 
-    def login(self, req: LoginRequest, request: Request) -> UserResponse:
+    async def login(self, req: LoginRequest, request: Request) -> UserResponse:
         """로그인"""
-        user = user_model.authenticateUser(req.email, req.password)
+        user = await user_model.authenticateUser(req.email, req.password)
         if not user:
             raise APIError(ErrorCode.INVALID_CREDENTIALS)
 
@@ -31,30 +31,22 @@ class AuthController:
         request.session["profileImageUrl"] = user.get("profileImageUrl")
         return UserResponse.model_validate(user)
 
-    def logout(self, request: Request) -> Dict:
+    async def logout(self, request: Request) -> Dict:
         """로그아웃"""
         request.session.clear()
         return {}
 
-    def getMe(self, request: Request) -> UserResponse:
+    async def getMe(self, user: Dict) -> UserResponse:
         """내 정보 조회"""
-        user_id = getattr(request.state, "user_id", None)
-        if not user_id:
-            raise APIError(ErrorCode.UNAUTHORIZED)
-
-        user = user_model.getUserById(user_id)
-        if not user:
-            raise APIError(ErrorCode.UNAUTHORIZED)
-
         return UserResponse.model_validate(user)
 
-    def checkEmailAvailability(self, email: str) -> Dict:
+    async def checkEmailAvailability(self, email: str) -> Dict:
         """이메일 중복 확인"""
-        return {"available": not user_model.emailExists(email)}
+        return {"available": not await user_model.emailExists(email)}
 
-    def checkNicknameAvailability(self, nickname: str) -> Dict:
+    async def checkNicknameAvailability(self, nickname: str) -> Dict:
         """닉네임 중복 확인"""
-        return {"available": not user_model.nicknameExists(nickname)}
+        return {"available": not await user_model.nicknameExists(nickname)}
 
 
 auth_controller = AuthController()

@@ -1,18 +1,18 @@
 import logging
 import os
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.sessions import SessionMiddleware
 from config import settings
 
-from utils.exceptions import APIError
-from utils.response import StandardResponse
-from utils.error_codes import ErrorCode, SuccessCode
-from utils.auth_middleware import AuthMiddleware
-from utils.request_id_middleware import RequestIDMiddleware, request_id_ctx
+from utils.common.response import StandardResponse
+from utils.errors.error_codes import SuccessCode
+from utils.middleware.auth_middleware import AuthMiddleware
+from utils.middleware.db_session_middleware import DBSessionMiddleware
+from utils.middleware.request_id_middleware import RequestIDMiddleware, request_id_ctx
+from utils.middleware.access_log_middleware import AccessLogMiddleware
+from utils.errors.exception_handlers import register_exception_handlers
+from utils.database.db import init_pool, close_pool
 
 # 로깅 필터: 로그에 request_id 추가
 class RequestIDFilter(logging.Filter):
@@ -27,9 +27,15 @@ logging_handler.setFormatter(logging.Formatter(
     '%(asctime)s - [%(request_id)s] - %(name)s - %(levelname)s - %(message)s'
 ))
 
+file_handler = logging.FileHandler("backend.log", encoding="utf-8")
+file_handler.addFilter(RequestIDFilter())
+file_handler.setFormatter(logging.Formatter(
+    '%(asctime)s - [%(request_id)s] - %(name)s - %(levelname)s - %(message)s'
+))
+
 logging.basicConfig(
     level=logging.INFO,
-    handlers=[logging_handler],
+    handlers=[logging_handler, file_handler],
     force=True
 )
 logger = logging.getLogger(__name__)
@@ -40,6 +46,15 @@ app = FastAPI(
     version="1.0.0"
 )
 
+@app.on_event("startup")
+async def startup_event():
+    await init_pool()
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    await close_pool()
+
 # 정적 파일 서빙
 UPLOAD_DIR = "public"
 if not os.path.exists(UPLOAD_DIR):
@@ -49,13 +64,9 @@ if not os.path.exists(UPLOAD_DIR):
 
 app.mount("/public", StaticFiles(directory=UPLOAD_DIR), name="public")
 
-# 미들웨어 등록 (LIFO 순서로 실행됨: RequestID -> CORS -> Session -> Auth -> App)
+# 미들웨어 등록 (LIFO 순서로 실행됨: RequestID -> AccessLog -> CORS -> Session -> Auth -> App)
 app.add_middleware(AuthMiddleware)
-app.add_middleware(SessionMiddleware, 
-                   secret_key=settings.secret_key,
-                   https_only=settings.cookie_secure,
-                   same_site=settings.cookie_samesite,
-                   max_age=settings.session_timeout)
+app.add_middleware(DBSessionMiddleware)
 app.add_middleware(CORSMiddleware,
                    allow_origins=[
                        "http://localhost:5500", 
@@ -66,35 +77,15 @@ app.add_middleware(CORSMiddleware,
                    allow_credentials=True,
                    allow_methods=["*"],
                    allow_headers=["*"])
+app.add_middleware(AccessLogMiddleware)
 app.add_middleware(RequestIDMiddleware)
 
-# 예외 핸들러
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    logger.warning(f"Validation error: {exc.errors()}")
-    return JSONResponse(
-        status_code=422,
-        content=StandardResponse.validation_error(exc.errors())
-    )
-
-@app.exception_handler(APIError)
-async def api_exception_handler(request: Request, exc: APIError):
-    logger.info(f"API error: {exc.code.name}")
-    return JSONResponse(
-        status_code=exc.status_code,
-        content=StandardResponse.error(exc.code, exc.details, exc.message)
-    )
-
-@app.exception_handler(Exception)
-async def general_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unexpected error: {str(exc)}", exc_info=True)
-    return JSONResponse(
-        status_code=500,
-        content=StandardResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, {})
-    )
+# 예외 핸들러 등록
+register_exception_handlers(app)
 
 @app.get("/health")
 async def health_check():
+    logger.info("Health check endpoint called")
     return StandardResponse.success(SuccessCode.SUCCESS, {"status": "healthy"})
 
 # 라우터 등록

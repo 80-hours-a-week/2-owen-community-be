@@ -1,161 +1,329 @@
 from typing import Dict, List, Optional, Union
-from datetime import datetime
-from utils.id_utils import generate_id
+from utils.common.id_utils import generate_id
+from utils.database.db import fetch_one, fetch_all, execute
 
 
 class PostModel:
     """게시글 데이터 관리 Model"""
 
-    def __init__(self):
-        # 메모리 기반 게시글 저장소 (Key를 문자열로 관리하여 JSON 직렬화 호환성 확보)
-        self.postsDb: Dict[str, Dict] = {}
-        # 좋아요 기록 저장소 {postId: {userId1, userId2, ...}}
-        self.likesDb: Dict[str, set] = {}
-
     def _normalizeId(self, idVal: Union[str, any]) -> str:
         """ID 정규화 (문자열로 변환)"""
         return str(idVal)
 
-    def clear(self):
+    def _format_datetime(self, value) -> Optional[str]:
+        if not value:
+            return None
+        return value.isoformat()
+
+    def _row_to_post(self, row: Optional[Dict]) -> Optional[Dict]:
+        if not row:
+            return None
+        return {
+            "postId": row["post_id"],
+            "title": row["title"],
+            "content": row["content"],
+            "authorId": row["author_id"],
+            "authorNickname": row.get("author_nickname"),
+            "authorProfileImageUrl": row.get("author_profile_image_url"),
+            "fileUrl": row.get("post_image_url"),
+            "createdAt": self._format_datetime(row.get("created_at")),
+            "updatedAt": self._format_datetime(row.get("updated_at")),
+            "hits": row.get("hits", 0),
+            "likeCount": row.get("like_count", 0),
+            "commentCount": row.get("comment_count", 0),
+            "isLiked": bool(row.get("is_liked", 0)),
+        }
+
+    async def clear(self):
         """저장소 초기화 (테스트용)"""
-        self.postsDb.clear()
-        self.likesDb.clear()
+        await execute("DELETE FROM post_likes")
+        await execute("DELETE FROM posts")
 
     def getNextPostId(self) -> str:
         """다음 게시글 ID 생성 (ULID)"""
         return generate_id()
 
-    def createPost(self, title: str, content: str, authorId: Union[str, any], authorNickname: str, fileUrl: Optional[str] = None) -> Dict:
+    async def createPost(
+        self,
+        title: str,
+        content: str,
+        authorId: Union[str, any],
+        authorNickname: str,
+        fileUrls: Optional[List[str]] = None,
+    ) -> Dict:
         """게시글 생성"""
         postId = self.getNextPostId()
         authorIdStr = self._normalizeId(authorId)
 
-        postData = {
-            "postId": postId,
-            "title": title,
-            "content": content,
-            "authorId": authorIdStr,
-            "authorNickname": authorNickname,
-            "fileUrl": fileUrl,
-            "createdAt": datetime.now().isoformat(),
-            "updatedAt": None,
-            "hits": 0,
-            "likeCount": 0,
-            "commentCount": 0
-        }
+        await execute(
+            """
+            INSERT INTO posts (post_id, user_id, title, content, post_image_url, hits, comment_count, created_at)
+            VALUES (%s, %s, %s, %s, %s, 0, 0, NOW())
+            """,
+            (postId, authorIdStr, title, content, None),  # post_image_url is now NULL
+        )
+        
+        # 여러 이미지 저장
+        if fileUrls:
+            await self.addPostImages(postId, fileUrls)
 
-        self.postsDb[postId] = postData
-        self.likesDb[postId] = set()
-        return postData.copy()
+        post = await self.getPostById(postId)
+        if post:
+            post["authorNickname"] = authorNickname
+        return post
 
-    def getPosts(self, limit: int = 10, offset: int = 0) -> Dict[str, Union[List[Dict], int]]:
+    async def getPosts(self, limit: int = 10, offset: int = 0, current_user_id: Optional[str] = None) -> Dict[str, Union[List[Dict], int]]:
         """게시글 목록 조회 (페이징 지원)"""
-        # 최신순 정렬
-        postsList = sorted(
-            self.postsDb.values(),
-            key=lambda x: x["createdAt"],
-            reverse=True
+        current_user_id_str = self._normalizeId(current_user_id) if current_user_id else None
+        
+        rows = await fetch_all(
+            """
+            SELECT
+                p.post_id,
+                p.user_id AS author_id,
+                u.nickname AS author_nickname,
+                u.profile_image_url AS author_profile_image_url,
+                p.title,
+                p.content,
+                p.post_image_url,
+                p.created_at,
+                p.updated_at,
+                p.hits,
+                p.comment_count,
+                COUNT(pl.user_id) AS like_count,
+                MAX(CASE WHEN pl.user_id = %s THEN 1 ELSE 0 END) AS is_liked
+            FROM posts p
+            LEFT JOIN users u ON u.user_id = p.user_id
+            LEFT JOIN post_likes pl ON pl.post_id = p.post_id
+            WHERE p.deleted_at IS NULL
+            GROUP BY
+                p.post_id,
+                p.user_id,
+                u.nickname,
+                u.profile_image_url,
+                p.title,
+                p.content,
+                p.post_image_url,
+                p.created_at,
+                p.updated_at,
+                p.hits,
+                p.comment_count
+            ORDER BY p.created_at DESC
+            LIMIT %s OFFSET %s
+            """,
+            (current_user_id_str, limit, offset),
         )
 
-        totalCount = len(postsList)
+        total_row = await fetch_one("SELECT COUNT(*) AS total FROM posts WHERE deleted_at IS NULL")
+        totalCount = total_row["total"] if total_row else 0
 
-        # 페이징 적용
-        startIdx = offset
-        endIdx = offset + limit
         return {
-            "posts": postsList[startIdx:endIdx],
-            "totalCount": totalCount
+            "posts": [self._row_to_post(row) for row in rows],
+            "totalCount": totalCount,
         }
 
-    def getPostById(self, postId: Union[str, any]) -> Optional[Dict]:
+    async def getPostById(self, postId: Union[str, any]) -> Optional[Dict]:
         """게시글 ID로 조회"""
         postIdStr = self._normalizeId(postId)
-        return self.postsDb.get(postIdStr)
+        row = await fetch_one(
+            """
+            SELECT
+                p.post_id,
+                p.user_id AS author_id,
+                u.nickname AS author_nickname,
+                u.profile_image_url AS author_profile_image_url,
+                p.title,
+                p.content,
+                p.post_image_url,
+                p.created_at,
+                p.updated_at,
+                p.hits,
+                p.comment_count,
+                COUNT(pl.user_id) AS like_count
+            FROM posts p
+            LEFT JOIN users u ON u.user_id = p.user_id
+            LEFT JOIN post_likes pl ON pl.post_id = p.post_id
+            WHERE p.post_id = %s AND p.deleted_at IS NULL
+            GROUP BY
+                p.post_id,
+                p.user_id,
+                u.nickname,
+                u.profile_image_url,
+                p.title,
+                p.content,
+                p.post_image_url,
+                p.created_at,
+                p.updated_at,
+                p.hits,
+                p.comment_count
+            """,
+            (postIdStr,),
+        )
+        return self._row_to_post(row)
 
-    def incrementViewCount(self, postId: Union[str, any]) -> bool:
+    async def incrementViewCount(self, postId: Union[str, any]) -> bool:
         """조회수 증가"""
         postIdStr = self._normalizeId(postId)
-        if postIdStr in self.postsDb:
-            self.postsDb[postIdStr]["hits"] += 1
-            return True
-        return False
+        affected = await execute(
+            "UPDATE posts SET hits = hits + 1 WHERE post_id = %s AND deleted_at IS NULL",
+            (postIdStr,),
+        )
+        return affected > 0
 
-    def updatePost(self, postId: Union[str, any], title: str, content: str, fileUrl: Optional[str] = None) -> Optional[Dict]:
+    async def updatePost(
+        self,
+        postId: Union[str, any],
+        title: str,
+        content: str,
+        fileUrls: Optional[List[str]] = None,
+    ) -> Optional[Dict]:
         """게시글 수정"""
         postIdStr = self._normalizeId(postId)
-        if postIdStr not in self.postsDb:
-            return None
+        fields = ["title = %s", "content = %s", "updated_at = NOW()"]
+        params = [title, content]
 
-        post = self.postsDb[postIdStr]
-        post["title"] = title
-        post["content"] = content
-        if fileUrl is not None:
-            post["fileUrl"] = fileUrl
-        post["updatedAt"] = datetime.now().isoformat()
+        # post_image_url은 NULL로 설정 (이제 post_images 테이블 사용)
+        fields.append("post_image_url = %s")
+        params.append(None)
 
-        return post.copy()
+        params.append(postIdStr)
+        await execute(
+            f"""
+            UPDATE posts
+            SET {', '.join(fields)}
+            WHERE post_id = %s AND deleted_at IS NULL
+            """,
+            params,
+        )
+        
+        # 기존 이미지 삭제 후 새 이미지 추가
+        if fileUrls is not None:
+            await self.deletePostImages(postIdStr)
+            if fileUrls:  # 빈 리스트가 아니면
+                await self.addPostImages(postIdStr, fileUrls)
+        
+        return await self.getPostById(postIdStr)
 
-    def deletePost(self, postId: Union[str, any]) -> bool:
+    async def deletePost(self, postId: Union[str, any]) -> bool:
         """게시글 삭제"""
         postIdStr = self._normalizeId(postId)
-        if postIdStr in self.postsDb:
-            del self.postsDb[postIdStr]
-            if postIdStr in self.likesDb:
-                del self.likesDb[postIdStr]
-            return True
-        return False
+        affected = await execute(
+            "UPDATE posts SET deleted_at = NOW() WHERE post_id = %s AND deleted_at IS NULL",
+            (postIdStr,),
+        )
+        return affected > 0
 
-    def getTotalPostsCount(self) -> int:
+    async def getTotalPostsCount(self) -> int:
         """전체 게시글 수 조회"""
-        return len(self.postsDb)
+        row = await fetch_one("SELECT COUNT(*) AS total FROM posts WHERE deleted_at IS NULL")
+        return row["total"] if row else 0
 
-    def toggleLike(self, postId: Union[str, any], userId: Union[str, any]) -> int:
+    async def toggleLike(self, postId: Union[str, any], userId: Union[str, any]) -> int:
         """좋아요 토글"""
         postIdStr = self._normalizeId(postId)
         userIdStr = self._normalizeId(userId)
-        
-        if postIdStr not in self.likesDb:
-            self.likesDb[postIdStr] = set()
-            
-        if userIdStr in self.likesDb[postIdStr]:
-            self.likesDb[postIdStr].remove(userIdStr)
-        else:
-            self.likesDb[postIdStr].add(userIdStr)
-            
-        # 캐시된 카운트 업데이트
-        count = len(self.likesDb[postIdStr])
-        if postIdStr in self.postsDb:
-            self.postsDb[postIdStr]["likeCount"] = count
-            
-        return count
 
-    def updateCommentCount(self, postId: Union[str, any], delta: int) -> int:
+        existing = await fetch_one(
+            "SELECT 1 FROM post_likes WHERE post_id = %s AND user_id = %s",
+            (postIdStr, userIdStr),
+        )
+
+        if existing:
+            await execute(
+                "DELETE FROM post_likes WHERE post_id = %s AND user_id = %s",
+                (postIdStr, userIdStr),
+            )
+        else:
+            await execute(
+                "INSERT INTO post_likes (post_id, user_id, created_at) VALUES (%s, %s, NOW())",
+                (postIdStr, userIdStr),
+            )
+
+        count_row = await fetch_one(
+            "SELECT COUNT(*) AS cnt FROM post_likes WHERE post_id = %s",
+            (postIdStr,),
+        )
+        return count_row["cnt"] if count_row else 0
+
+    async def updateCommentCount(self, postId: Union[str, any], delta: int) -> int:
         """댓글 수 업데이트 (캐시)"""
         postIdStr = self._normalizeId(postId)
-        if postIdStr in self.postsDb:
-            self.postsDb[postIdStr]["commentCount"] += delta
-            return self.postsDb[postIdStr]["commentCount"]
-        return 0
+        await execute(
+            "UPDATE posts SET comment_count = comment_count + %s WHERE post_id = %s AND deleted_at IS NULL",
+            (delta, postIdStr),
+        )
+        row = await fetch_one(
+            "SELECT comment_count FROM posts WHERE post_id = %s AND deleted_at IS NULL",
+            (postIdStr,),
+        )
+        return row["comment_count"] if row else 0
 
     def updateAuthorNickname(self, authorId: str, newNickname: str) -> int:
-        """작성자 닉네임 일괄 업데이트"""
-        count = 0
-        for post in self.postsDb.values():
-            if post["authorId"] == authorId:
-                post["authorNickname"] = newNickname
-                count += 1
-        return count
+        """작성자 닉네임 일괄 업데이트 (DB 정규화로 인해 no-op)"""
+        return 0
 
-    def getLikeCount(self, postId: Union[str, any]) -> int:
+    async def getLikeCount(self, postId: Union[str, any]) -> int:
         """좋아요 수 조회"""
         postIdStr = self._normalizeId(postId)
-        return len(self.likesDb.get(postIdStr, set()))
+        row = await fetch_one(
+            "SELECT COUNT(*) AS cnt FROM post_likes WHERE post_id = %s",
+            (postIdStr,),
+        )
+        return row["cnt"] if row else 0
 
-    def isLikedByUser(self, postId: Union[str, any], userId: Union[str, any]) -> bool:
+    async def isLikedByUser(self, postId: Union[str, any], userId: Union[str, any]) -> bool:
         """특정 사용자의 좋아요 여부"""
         postIdStr = self._normalizeId(postId)
         userIdStr = self._normalizeId(userId)
-        return userIdStr in self.likesDb.get(postIdStr, set())
+        row = await fetch_one(
+            "SELECT 1 FROM post_likes WHERE post_id = %s AND user_id = %s",
+            (postIdStr, userIdStr),
+        )
+        return row is not None
+
+    async def getPostImages(self, postId: Union[str, any]) -> List[Dict]:
+        """특정 게시글의 이미지 리스트 조회"""
+        postIdStr = self._normalizeId(postId)
+        rows = await fetch_all(
+            "SELECT image_id, post_id, image_url, sort_order FROM post_images WHERE post_id = %s ORDER BY sort_order ASC",
+            (postIdStr,),
+        )
+        return [
+            {
+                "imageId": row["image_id"],
+                "postId": row["post_id"],
+                "imageUrl": row["image_url"],
+                "sortOrder": row["sort_order"],
+            }
+            for row in rows
+        ]
+
+    async def addPostImages(self, postId: Union[str, any], imageUrls: List[str]) -> int:
+        """게시글에 여러 이미지 추가"""
+        if not imageUrls:
+            return 0
+        
+        postIdStr = self._normalizeId(postId)
+        inserted_count = 0
+        
+        for idx, imageUrl in enumerate(imageUrls):
+            imageId = generate_id()
+            await execute(
+                "INSERT INTO post_images (image_id, post_id, image_url, sort_order, created_at) VALUES (%s, %s, %s, %s, NOW())",
+                (imageId, postIdStr, imageUrl, idx),
+            )
+            inserted_count += 1
+        
+        return inserted_count
+
+    async def deletePostImages(self, postId: Union[str, any]) -> int:
+        """게시글의 모든 이미지 삭제"""
+        postIdStr = self._normalizeId(postId)
+        affected = await execute(
+            "DELETE FROM post_images WHERE post_id = %s",
+            (postIdStr,),
+        )
+        return affected
 
 
 # Model 인스턴스 생성

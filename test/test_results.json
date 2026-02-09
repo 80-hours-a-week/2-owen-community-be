@@ -1,37 +1,37 @@
 {
-  "timestamp": "2026-01-21T13:48:49.399876",
+  "timestamp": "2026-01-29T15:28:32.466724",
   "summary": {
-    "total": 10,
-    "passed": 10,
+    "total": 12,
+    "passed": 12,
     "failed": 0,
     "skipped": 0,
     "error": 0
   },
   "details": [
     {
-      "nodeid": "Week3/test/test_api.py::test_signup_success",
+      "nodeid": "test/test_api.py::test_signup_success",
       "status": "passed",
-      "duration": 0.24532574999830103,
+      "duration": 0.262644000002183,
       "calls": [
         {
           "method": "POST",
           "url": "/v1/auth/signup",
           "input": {
             "email": "test@example.com",
-            "password": "password123",
+            "password": "Password123!",
             "nickname": "tester"
           },
           "output": {
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4C91H808RSW355ZPAB3Q",
+                "userId": "01KG470J3XGJVM0MTR0JYX9VYX",
                 "email": "test@example.com",
                 "nickname": "tester",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:44.555791",
+                "createdAt": "2026-01-29T15:28:22",
                 "updatedAt": null
               },
               "details": null
@@ -42,9 +42,9 @@
       "message": null
     },
     {
-      "nodeid": "Week3/test/test_api.py::test_signup_failure_invalid_input",
+      "nodeid": "test/test_api.py::test_signup_failure_invalid_input",
       "status": "passed",
-      "duration": 0.0025866249998216517,
+      "duration": 0.0031929590040817857,
       "calls": [
         {
           "method": "POST",
@@ -58,7 +58,7 @@
             "status_code": 422,
             "body": {
               "code": "INVALID_INPUT",
-              "message": "입력 값이 올바르지 않습니다.",
+              "message": "",
               "details": {
                 "email": [
                   "INVALID_FORMAT"
@@ -77,29 +77,29 @@
       "message": null
     },
     {
-      "nodeid": "Week3/test/test_api.py::test_signup_failure_duplicate",
+      "nodeid": "test/test_api.py::test_signup_failure_duplicate",
       "status": "passed",
-      "duration": 0.24188404199958313,
+      "duration": 0.27347320900298655,
       "calls": [
         {
           "method": "POST",
           "url": "/v1/auth/signup",
           "input": {
             "email": "dup@example.com",
-            "password": "password123",
+            "password": "Password123!",
             "nickname": "user1"
           },
           "output": {
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4CGK5ZEGMVFR8WGCPW1J",
+                "userId": "01KG470JX2A0TQ5A6E6JCM6TWA",
                 "email": "dup@example.com",
                 "nickname": "user1",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:44.799838",
+                "createdAt": "2026-01-29T15:28:23",
                 "updatedAt": null
               },
               "details": null
@@ -111,14 +111,14 @@
           "url": "/v1/auth/signup",
           "input": {
             "email": "dup@example.com",
-            "password": "password123",
+            "password": "Password123!",
             "nickname": "user2"
           },
           "output": {
             "status_code": 409,
             "body": {
               "code": "ALREADY_EXISTS",
-              "message": "이미 사용 중인 이메일입니다.",
+              "message": "",
               "details": {
                 "field": "email",
                 "value": "dup@example.com"
@@ -131,14 +131,14 @@
           "url": "/v1/auth/signup",
           "input": {
             "email": "other@example.com",
-            "password": "password123",
+            "password": "Password123!",
             "nickname": "user1"
           },
           "output": {
             "status_code": 409,
             "body": {
               "code": "ALREADY_EXISTS",
-              "message": "이미 사용 중인 닉네임입니다.",
+              "message": "",
               "details": {
                 "field": "nickname",
                 "value": "user1"
@@ -150,29 +150,29 @@
       "message": null
     },
     {
-      "nodeid": "Week3/test/test_api.py::test_login_lifecycle",
+      "nodeid": "test/test_api.py::test_login_lifecycle",
       "status": "passed",
-      "duration": 0.4760396250003396,
+      "duration": 0.5611572910129325,
       "calls": [
         {
           "method": "POST",
           "url": "/v1/auth/signup",
           "input": {
             "email": "login@example.com",
-            "password": "password123",
+            "password": "Password123!",
             "nickname": "tester"
           },
           "output": {
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4CR67E8ECX9WSRQ51E61",
+                "userId": "01KG470KE01703B31GFEN79WDZ",
                 "email": "login@example.com",
                 "nickname": "tester",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:45.039883",
+                "createdAt": "2026-01-29T15:28:23",
                 "updatedAt": null
               },
               "details": null
@@ -184,19 +184,19 @@
           "url": "/v1/auth/login",
           "input": {
             "email": "login@example.com",
-            "password": "password123"
+            "password": "Password123!"
           },
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4CR67E8ECX9WSRQ51E61",
+                "userId": "01KG470KE01703B31GFEN79WDZ",
                 "email": "login@example.com",
                 "nickname": "tester",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:45.039883",
+                "createdAt": "2026-01-29T15:28:23",
                 "updatedAt": null
               },
               "details": null
@@ -211,13 +211,13 @@
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4CR67E8ECX9WSRQ51E61",
+                "userId": "01KG470KE01703B31GFEN79WDZ",
                 "email": "login@example.com",
                 "nickname": "tester",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:45.039883",
+                "createdAt": "2026-01-29T15:28:23",
                 "updatedAt": null
               },
               "details": null
@@ -232,7 +232,7 @@
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {},
               "details": null
             }
@@ -246,7 +246,7 @@
             "status_code": 401,
             "body": {
               "code": "UNAUTHORIZED",
-              "message": "로그인이 필요합니다.",
+              "message": "",
               "details": {}
             }
           }
@@ -255,29 +255,29 @@
       "message": null
     },
     {
-      "nodeid": "Week3/test/test_api.py::test_login_failure",
+      "nodeid": "test/test_api.py::test_login_failure",
       "status": "passed",
-      "duration": 0.47421804199984763,
+      "duration": 0.5369160830014152,
       "calls": [
         {
           "method": "POST",
           "url": "/v1/auth/signup",
           "input": {
             "email": "fail@example.com",
-            "password": "password123",
+            "password": "Password123!",
             "nickname": "tester"
           },
           "output": {
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4D72GHE926C7C9ABMCJC",
+                "userId": "01KG470M9G8XYND6M98HK18636",
                 "email": "fail@example.com",
                 "nickname": "tester",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:45.517415",
+                "createdAt": "2026-01-29T15:28:24",
                 "updatedAt": null
               },
               "details": null
@@ -295,7 +295,7 @@
             "status_code": 401,
             "body": {
               "code": "INVALID_CREDENTIALS",
-              "message": "인증 정보가 올바르지 않습니다.",
+              "message": "",
               "details": {}
             }
           }
@@ -305,13 +305,13 @@
           "url": "/v1/auth/login",
           "input": {
             "email": "none@example.com",
-            "password": "password123"
+            "password": "Password123!"
           },
           "output": {
             "status_code": 401,
             "body": {
               "code": "INVALID_CREDENTIALS",
-              "message": "인증 정보가 올바르지 않습니다.",
+              "message": "",
               "details": {}
             }
           }
@@ -320,29 +320,29 @@
       "message": null
     },
     {
-      "nodeid": "Week3/test/test_api.py::test_user_update_success",
+      "nodeid": "test/test_api.py::test_user_update_success",
       "status": "passed",
-      "duration": 0.9636291670012724,
+      "duration": 1.0641322919982485,
       "calls": [
         {
           "method": "POST",
           "url": "/v1/auth/signup",
           "input": {
             "email": "update@test.com",
-            "password": "password123",
+            "password": "Password123!",
             "nickname": "oldNick"
           },
           "output": {
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4DNX1GP0Z0XYV0PYRTJN",
+                "userId": "01KG470N25D85VY4MHWDDHFBGC",
                 "email": "update@test.com",
                 "nickname": "oldNick",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:45.992341",
+                "createdAt": "2026-01-29T15:28:25",
                 "updatedAt": null
               },
               "details": null
@@ -354,19 +354,19 @@
           "url": "/v1/auth/login",
           "input": {
             "email": "update@test.com",
-            "password": "password123"
+            "password": "Password123!"
           },
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4DNX1GP0Z0XYV0PYRTJN",
+                "userId": "01KG470N25D85VY4MHWDDHFBGC",
                 "email": "update@test.com",
                 "nickname": "oldNick",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:45.992341",
+                "createdAt": "2026-01-29T15:28:25",
                 "updatedAt": null
               },
               "details": null
@@ -383,14 +383,14 @@
             "status_code": 200,
             "body": {
               "code": "UPDATED",
-              "message": "리소스가 성공적으로 수정되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4DNX1GP0Z0XYV0PYRTJN",
+                "userId": "01KG470N25D85VY4MHWDDHFBGC",
                 "email": "update@test.com",
                 "nickname": "newNick",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:45.992341",
-                "updatedAt": "2026-01-21T13:48:46.236354"
+                "createdAt": "2026-01-29T15:28:25",
+                "updatedAt": "2026-01-29T15:28:25"
               },
               "details": null
             }
@@ -400,13 +400,13 @@
           "method": "PATCH",
           "url": "/v1/users/password",
           "input": {
-            "password": "newpassword123"
+            "password": "newPassword123!"
           },
           "output": {
             "status_code": 200,
             "body": {
               "code": "UPDATED",
-              "message": "리소스가 성공적으로 수정되었습니다.",
+              "message": "",
               "data": {},
               "details": null
             }
@@ -420,7 +420,7 @@
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {},
               "details": null
             }
@@ -431,20 +431,20 @@
           "url": "/v1/auth/login",
           "input": {
             "email": "update@test.com",
-            "password": "newpassword123"
+            "password": "newPassword123!"
           },
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4DNX1GP0Z0XYV0PYRTJN",
+                "userId": "01KG470N25D85VY4MHWDDHFBGC",
                 "email": "update@test.com",
                 "nickname": "newNick",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:45.992341",
-                "updatedAt": "2026-01-21T13:48:46.474560"
+                "createdAt": "2026-01-29T15:28:25",
+                "updatedAt": "2026-01-29T15:28:26"
               },
               "details": null
             }
@@ -454,29 +454,29 @@
       "message": null
     },
     {
-      "nodeid": "Week3/test/test_api.py::test_user_delete_success",
+      "nodeid": "test/test_api.py::test_user_delete_success",
       "status": "passed",
-      "duration": 0.47584787500090897,
+      "duration": 0.531850333994953,
       "calls": [
         {
           "method": "POST",
           "url": "/v1/auth/signup",
           "input": {
             "email": "del@test.com",
-            "password": "password123",
-            "nickname": "to_be_deleted"
+            "password": "Password123!",
+            "nickname": "deleted"
           },
           "output": {
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4EM22VG5W3TDYKR7VWB7",
+                "userId": "01KG470PBSZ9942TEAX23NZVNJ",
                 "email": "del@test.com",
-                "nickname": "to_be_deleted",
+                "nickname": "deleted",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:46.956756",
+                "createdAt": "2026-01-29T15:28:26",
                 "updatedAt": null
               },
               "details": null
@@ -488,19 +488,19 @@
           "url": "/v1/auth/login",
           "input": {
             "email": "del@test.com",
-            "password": "password123"
+            "password": "Password123!"
           },
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4EM22VG5W3TDYKR7VWB7",
+                "userId": "01KG470PBSZ9942TEAX23NZVNJ",
                 "email": "del@test.com",
-                "nickname": "to_be_deleted",
+                "nickname": "deleted",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:46.956756",
+                "createdAt": "2026-01-29T15:28:26",
                 "updatedAt": null
               },
               "details": null
@@ -515,7 +515,7 @@
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {},
               "details": null
             }
@@ -526,13 +526,13 @@
           "url": "/v1/auth/login",
           "input": {
             "email": "del@test.com",
-            "password": "password123"
+            "password": "Password123!"
           },
           "output": {
             "status_code": 401,
             "body": {
               "code": "INVALID_CREDENTIALS",
-              "message": "인증 정보가 올바르지 않습니다.",
+              "message": "",
               "details": {}
             }
           }
@@ -541,29 +541,479 @@
       "message": null
     },
     {
-      "nodeid": "Week3/test/test_api.py::test_post_full_lifecycle",
+      "nodeid": "test/test_api.py::test_post_list_pagination",
       "status": "passed",
-      "duration": 1.213846333001129,
+      "duration": 0.6507051660009893,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "list@t.com",
+            "password": "Password123!",
+            "nickname": "lister"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "",
+              "data": {
+                "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                "email": "list@t.com",
+                "nickname": "lister",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-29T15:28:27",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "list@t.com",
+            "password": "Password123!"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "",
+              "data": {
+                "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                "email": "list@t.com",
+                "nickname": "lister",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-29T15:28:27",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts",
+          "input": {
+            "title": "Test Title 1",
+            "content": "Test Content 1"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "",
+              "data": {
+                "postId": "01KG470QMTPYRX57XJVXQXXBQ0",
+                "title": "Test Title 1",
+                "content": "Test Content 1",
+                "likeCount": 0,
+                "commentCount": 0,
+                "hits": 0,
+                "author": {
+                  "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                  "nickname": "lister",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-29T15:28:27",
+                "updatedAt": null,
+                "isLiked": false
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts",
+          "input": {
+            "title": "Test Title 2",
+            "content": "Test Content 2"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "",
+              "data": {
+                "postId": "01KG470QP5B4PT5DP7WS4V6XC4",
+                "title": "Test Title 2",
+                "content": "Test Content 2",
+                "likeCount": 0,
+                "commentCount": 0,
+                "hits": 0,
+                "author": {
+                  "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                  "nickname": "lister",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-29T15:28:27",
+                "updatedAt": null,
+                "isLiked": false
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts",
+          "input": {
+            "title": "Test Title 3",
+            "content": "Test Content 3"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "",
+              "data": {
+                "postId": "01KG470QPRZH9D189Z09Y92EMV",
+                "title": "Test Title 3",
+                "content": "Test Content 3",
+                "likeCount": 0,
+                "commentCount": 0,
+                "hits": 0,
+                "author": {
+                  "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                  "nickname": "lister",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-29T15:28:27",
+                "updatedAt": null,
+                "isLiked": false
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts",
+          "input": {
+            "title": "Test Title 4",
+            "content": "Test Content 4"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "",
+              "data": {
+                "postId": "01KG470QQ7Z4H5RH4P0PMF8J56",
+                "title": "Test Title 4",
+                "content": "Test Content 4",
+                "likeCount": 0,
+                "commentCount": 0,
+                "hits": 0,
+                "author": {
+                  "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                  "nickname": "lister",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-29T15:28:28",
+                "updatedAt": null,
+                "isLiked": false
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts",
+          "input": {
+            "title": "Test Title 5",
+            "content": "Test Content 5"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "",
+              "data": {
+                "postId": "01KG470QQQP4Q1KK6X01V29XHH",
+                "title": "Test Title 5",
+                "content": "Test Content 5",
+                "likeCount": 0,
+                "commentCount": 0,
+                "hits": 0,
+                "author": {
+                  "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                  "nickname": "lister",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-29T15:28:28",
+                "updatedAt": null,
+                "isLiked": false
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "url": "/v1/posts",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "",
+              "data": {
+                "items": [
+                  {
+                    "postId": "01KG470QQ7Z4H5RH4P0PMF8J56",
+                    "title": "Test Title 4",
+                    "content": "Test Content 4",
+                    "likeCount": 0,
+                    "commentCount": 0,
+                    "hits": 0,
+                    "author": {
+                      "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                      "nickname": "lister",
+                      "profileImageUrl": null
+                    },
+                    "file": null,
+                    "createdAt": "2026-01-29T15:28:28",
+                    "updatedAt": null,
+                    "isLiked": null
+                  },
+                  {
+                    "postId": "01KG470QQQP4Q1KK6X01V29XHH",
+                    "title": "Test Title 5",
+                    "content": "Test Content 5",
+                    "likeCount": 0,
+                    "commentCount": 0,
+                    "hits": 0,
+                    "author": {
+                      "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                      "nickname": "lister",
+                      "profileImageUrl": null
+                    },
+                    "file": null,
+                    "createdAt": "2026-01-29T15:28:28",
+                    "updatedAt": null,
+                    "isLiked": null
+                  },
+                  {
+                    "postId": "01KG470QMTPYRX57XJVXQXXBQ0",
+                    "title": "Test Title 1",
+                    "content": "Test Content 1",
+                    "likeCount": 0,
+                    "commentCount": 0,
+                    "hits": 0,
+                    "author": {
+                      "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                      "nickname": "lister",
+                      "profileImageUrl": null
+                    },
+                    "file": null,
+                    "createdAt": "2026-01-29T15:28:27",
+                    "updatedAt": null,
+                    "isLiked": null
+                  },
+                  {
+                    "postId": "01KG470QP5B4PT5DP7WS4V6XC4",
+                    "title": "Test Title 2",
+                    "content": "Test Content 2",
+                    "likeCount": 0,
+                    "commentCount": 0,
+                    "hits": 0,
+                    "author": {
+                      "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                      "nickname": "lister",
+                      "profileImageUrl": null
+                    },
+                    "file": null,
+                    "createdAt": "2026-01-29T15:28:27",
+                    "updatedAt": null,
+                    "isLiked": null
+                  },
+                  {
+                    "postId": "01KG470QPRZH9D189Z09Y92EMV",
+                    "title": "Test Title 3",
+                    "content": "Test Content 3",
+                    "likeCount": 0,
+                    "commentCount": 0,
+                    "hits": 0,
+                    "author": {
+                      "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                      "nickname": "lister",
+                      "profileImageUrl": null
+                    },
+                    "file": null,
+                    "createdAt": "2026-01-29T15:28:27",
+                    "updatedAt": null,
+                    "isLiked": null
+                  }
+                ],
+                "pagination": {
+                  "totalCount": 5,
+                  "limit": 10,
+                  "offset": 0,
+                  "currentPage": 1,
+                  "totalPage": 1,
+                  "hasNext": false
+                }
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "url": "/v1/posts?limit=2&offset=0",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "",
+              "data": {
+                "items": [
+                  {
+                    "postId": "01KG470QQ7Z4H5RH4P0PMF8J56",
+                    "title": "Test Title 4",
+                    "content": "Test Content 4",
+                    "likeCount": 0,
+                    "commentCount": 0,
+                    "hits": 0,
+                    "author": {
+                      "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                      "nickname": "lister",
+                      "profileImageUrl": null
+                    },
+                    "file": null,
+                    "createdAt": "2026-01-29T15:28:28",
+                    "updatedAt": null,
+                    "isLiked": null
+                  },
+                  {
+                    "postId": "01KG470QQQP4Q1KK6X01V29XHH",
+                    "title": "Test Title 5",
+                    "content": "Test Content 5",
+                    "likeCount": 0,
+                    "commentCount": 0,
+                    "hits": 0,
+                    "author": {
+                      "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                      "nickname": "lister",
+                      "profileImageUrl": null
+                    },
+                    "file": null,
+                    "createdAt": "2026-01-29T15:28:28",
+                    "updatedAt": null,
+                    "isLiked": null
+                  }
+                ],
+                "pagination": {
+                  "totalCount": 5,
+                  "limit": 2,
+                  "offset": 0,
+                  "currentPage": 1,
+                  "totalPage": 3,
+                  "hasNext": true
+                }
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "url": "/v1/posts?limit=2&offset=2",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "",
+              "data": {
+                "items": [
+                  {
+                    "postId": "01KG470QMTPYRX57XJVXQXXBQ0",
+                    "title": "Test Title 1",
+                    "content": "Test Content 1",
+                    "likeCount": 0,
+                    "commentCount": 0,
+                    "hits": 0,
+                    "author": {
+                      "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                      "nickname": "lister",
+                      "profileImageUrl": null
+                    },
+                    "file": null,
+                    "createdAt": "2026-01-29T15:28:27",
+                    "updatedAt": null,
+                    "isLiked": null
+                  },
+                  {
+                    "postId": "01KG470QP5B4PT5DP7WS4V6XC4",
+                    "title": "Test Title 2",
+                    "content": "Test Content 2",
+                    "likeCount": 0,
+                    "commentCount": 0,
+                    "hits": 0,
+                    "author": {
+                      "userId": "01KG470Q4W512CETR4PNP0CFQ8",
+                      "nickname": "lister",
+                      "profileImageUrl": null
+                    },
+                    "file": null,
+                    "createdAt": "2026-01-29T15:28:27",
+                    "updatedAt": null,
+                    "isLiked": null
+                  }
+                ],
+                "pagination": {
+                  "totalCount": 5,
+                  "limit": 2,
+                  "offset": 2,
+                  "currentPage": 2,
+                  "totalPage": 3,
+                  "hasNext": true
+                }
+              },
+              "details": null
+            }
+          }
+        }
+      ],
+      "message": null
+    },
+    {
+      "nodeid": "test/test_api.py::test_post_full_lifecycle",
+      "status": "passed",
+      "duration": 1.5822917499899631,
       "calls": [
         {
           "method": "POST",
           "url": "/v1/auth/signup",
           "input": {
             "email": "p@t.com",
-            "password": "password123",
+            "password": "Password123!",
             "nickname": "writer"
           },
           "output": {
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                "userId": "01KG470R17HD9A9Y5NV8Q0VA1F",
                 "email": "p@t.com",
                 "nickname": "writer",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:47.435541",
+                "createdAt": "2026-01-29T15:28:28",
                 "updatedAt": null
               },
               "details": null
@@ -575,19 +1025,19 @@
           "url": "/v1/auth/login",
           "input": {
             "email": "p@t.com",
-            "password": "password123"
+            "password": "Password123!"
           },
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                "userId": "01KG470R17HD9A9Y5NV8Q0VA1F",
                 "email": "p@t.com",
                 "nickname": "writer",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:47.435541",
+                "createdAt": "2026-01-29T15:28:28",
                 "updatedAt": null
               },
               "details": null
@@ -605,22 +1055,23 @@
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "postId": "01KFFE4FHXZTSVG1NBXHXSJ7AM",
+                "postId": "01KG470RMYT8SDCFZJWWZB71JB",
                 "title": "Test Title",
                 "content": "Test Content",
                 "likeCount": 0,
                 "commentCount": 0,
                 "hits": 0,
                 "author": {
-                  "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                  "userId": "01KG470R17HD9A9Y5NV8Q0VA1F",
                   "nickname": "writer",
                   "profileImageUrl": null
                 },
                 "file": null,
-                "createdAt": "2026-01-21T13:48:47.677445",
-                "updatedAt": null
+                "createdAt": "2026-01-29T15:28:28",
+                "updatedAt": null,
+                "isLiked": false
               },
               "details": null
             }
@@ -628,28 +1079,29 @@
         },
         {
           "method": "GET",
-          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM",
+          "url": "/v1/posts/01KG470RMYT8SDCFZJWWZB71JB",
           "input": null,
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "postId": "01KFFE4FHXZTSVG1NBXHXSJ7AM",
+                "postId": "01KG470RMYT8SDCFZJWWZB71JB",
                 "title": "Test Title",
                 "content": "Test Content",
                 "likeCount": 0,
                 "commentCount": 0,
                 "hits": 1,
                 "author": {
-                  "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                  "userId": "01KG470R17HD9A9Y5NV8Q0VA1F",
                   "nickname": "writer",
                   "profileImageUrl": null
                 },
                 "file": null,
-                "createdAt": "2026-01-21T13:48:47.677445",
-                "updatedAt": null
+                "createdAt": "2026-01-29T15:28:28",
+                "updatedAt": null,
+                "isLiked": false
               },
               "details": null
             }
@@ -657,13 +1109,13 @@
         },
         {
           "method": "POST",
-          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM/likes",
+          "url": "/v1/posts/01KG470RMYT8SDCFZJWWZB71JB/likes",
           "input": null,
           "output": {
             "status_code": 201,
             "body": {
               "code": "UPDATED",
-              "message": "리소스가 성공적으로 수정되었습니다.",
+              "message": "",
               "data": {
                 "likeCount": 1
               },
@@ -673,13 +1125,13 @@
         },
         {
           "method": "POST",
-          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM/likes",
+          "url": "/v1/posts/01KG470RMYT8SDCFZJWWZB71JB/likes",
           "input": null,
           "output": {
             "status_code": 201,
             "body": {
               "code": "UPDATED",
-              "message": "리소스가 성공적으로 수정되었습니다.",
+              "message": "",
               "data": {
                 "likeCount": 0
               },
@@ -689,7 +1141,7 @@
         },
         {
           "method": "PATCH",
-          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM",
+          "url": "/v1/posts/01KG470RMYT8SDCFZJWWZB71JB",
           "input": {
             "title": "Updated Title",
             "content": "Updated Content"
@@ -698,22 +1150,23 @@
             "status_code": 200,
             "body": {
               "code": "UPDATED",
-              "message": "리소스가 성공적으로 수정되었습니다.",
+              "message": "",
               "data": {
-                "postId": "01KFFE4FHXZTSVG1NBXHXSJ7AM",
+                "postId": "01KG470RMYT8SDCFZJWWZB71JB",
                 "title": "Updated Title",
                 "content": "Updated Content",
                 "likeCount": 0,
                 "commentCount": 0,
                 "hits": 1,
                 "author": {
-                  "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                  "userId": "01KG470R17HD9A9Y5NV8Q0VA1F",
                   "nickname": "writer",
                   "profileImageUrl": null
                 },
                 "file": null,
-                "createdAt": "2026-01-21T13:48:47.677445",
-                "updatedAt": "2026-01-21T13:48:47.684265"
+                "createdAt": "2026-01-29T15:28:28",
+                "updatedAt": "2026-01-29T15:28:29",
+                "isLiked": false
               },
               "details": null
             }
@@ -724,20 +1177,20 @@
           "url": "/v1/auth/signup",
           "input": {
             "email": "h@t.com",
-            "password": "password123",
+            "password": "Password123!",
             "nickname": "hacker"
           },
           "output": {
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4FJ6BB073HKMTNSZB4GE",
+                "userId": "01KG470RRFSS6VZN91D6YJKT6D",
                 "email": "h@t.com",
                 "nickname": "hacker",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:47.919792",
+                "createdAt": "2026-01-29T15:28:29",
                 "updatedAt": null
               },
               "details": null
@@ -749,19 +1202,19 @@
           "url": "/v1/auth/login",
           "input": {
             "email": "h@t.com",
-            "password": "password123"
+            "password": "Password123!"
           },
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4FJ6BB073HKMTNSZB4GE",
+                "userId": "01KG470RRFSS6VZN91D6YJKT6D",
                 "email": "h@t.com",
                 "nickname": "hacker",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:47.919792",
+                "createdAt": "2026-01-29T15:28:29",
                 "updatedAt": null
               },
               "details": null
@@ -770,7 +1223,7 @@
         },
         {
           "method": "PATCH",
-          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM",
+          "url": "/v1/posts/01KG470RMYT8SDCFZJWWZB71JB",
           "input": {
             "title": "Hacked",
             "content": "Hacked Content"
@@ -779,7 +1232,7 @@
             "status_code": 403,
             "body": {
               "code": "FORBIDDEN",
-              "message": "권한이 없습니다.",
+              "message": "",
               "details": {
                 "resource": "게시글",
                 "id": null
@@ -792,19 +1245,19 @@
           "url": "/v1/auth/login",
           "input": {
             "email": "p@t.com",
-            "password": "password123"
+            "password": "Password123!"
           },
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4F2YP03F7H3D9PZNM54D",
+                "userId": "01KG470R17HD9A9Y5NV8Q0VA1F",
                 "email": "p@t.com",
                 "nickname": "writer",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:47.435541",
+                "createdAt": "2026-01-29T15:28:28",
                 "updatedAt": null
               },
               "details": null
@@ -813,15 +1266,15 @@
         },
         {
           "method": "DELETE",
-          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM",
+          "url": "/v1/posts/01KG470RMYT8SDCFZJWWZB71JB",
           "input": null,
           "output": {
             "status_code": 200,
             "body": {
               "code": "DELETED",
-              "message": "리소스가 성공적으로 삭제되었습니다.",
+              "message": "",
               "data": {
-                "postId": "01KFFE4FHXZTSVG1NBXHXSJ7AM",
+                "postId": "01KG470RMYT8SDCFZJWWZB71JB",
                 "message": "게시글이 삭제되었습니다"
               },
               "details": null
@@ -830,16 +1283,16 @@
         },
         {
           "method": "GET",
-          "url": "/v1/posts/01KFFE4FHXZTSVG1NBXHXSJ7AM",
+          "url": "/v1/posts/01KG470RMYT8SDCFZJWWZB71JB",
           "input": null,
           "output": {
             "status_code": 404,
             "body": {
               "code": "POST_NOT_FOUND",
-              "message": "게시글을 찾을 수 없습니다.",
+              "message": "",
               "details": {
                 "resource": "게시글",
-                "id": "01KFFE4FHXZTSVG1NBXHXSJ7AM"
+                "id": "01KG470RMYT8SDCFZJWWZB71JB"
               }
             }
           }
@@ -848,29 +1301,224 @@
       "message": null
     },
     {
-      "nodeid": "Week3/test/test_api.py::test_comment_lifecycle_and_cache",
+      "nodeid": "test/test_api.py::test_comment_list",
       "status": "passed",
-      "duration": 0.5046547090005333,
+      "duration": 0.6151299579942133,
+      "calls": [
+        {
+          "method": "POST",
+          "url": "/v1/auth/signup",
+          "input": {
+            "email": "commentlist@t.com",
+            "password": "Password123!",
+            "nickname": "commenter"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "",
+              "data": {
+                "userId": "01KG470STVPAGXH4HBA9D7E3W9",
+                "email": "commentlist@t.com",
+                "nickname": "commenter",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-29T15:28:30",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/auth/login",
+          "input": {
+            "email": "commentlist@t.com",
+            "password": "Password123!"
+          },
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "",
+              "data": {
+                "userId": "01KG470STVPAGXH4HBA9D7E3W9",
+                "email": "commentlist@t.com",
+                "nickname": "commenter",
+                "profileImageUrl": null,
+                "createdAt": "2026-01-29T15:28:30",
+                "updatedAt": null
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts",
+          "input": {
+            "title": "Post for Comments",
+            "content": "Content"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "",
+              "data": {
+                "postId": "01KG470TAQH5KPFZYGSA54R1S3",
+                "title": "Post for Comments",
+                "content": "Content",
+                "likeCount": 0,
+                "commentCount": 0,
+                "hits": 0,
+                "author": {
+                  "userId": "01KG470STVPAGXH4HBA9D7E3W9",
+                  "nickname": "commenter",
+                  "profileImageUrl": null
+                },
+                "file": null,
+                "createdAt": "2026-01-29T15:28:30",
+                "updatedAt": null,
+                "isLiked": false
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts/01KG470TAQH5KPFZYGSA54R1S3/comments",
+          "input": {
+            "content": "Comment 1"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "",
+              "data": {
+                "commentId": "01KG470TBN8EVNGSA3J5CYFZQP"
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts/01KG470TAQH5KPFZYGSA54R1S3/comments",
+          "input": {
+            "content": "Comment 2"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "",
+              "data": {
+                "commentId": "01KG470TCBK19R9KFKC5HHKBVK"
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "url": "/v1/posts/01KG470TAQH5KPFZYGSA54R1S3/comments",
+          "input": {
+            "content": "Comment 3"
+          },
+          "output": {
+            "status_code": 201,
+            "body": {
+              "code": "CREATED",
+              "message": "",
+              "data": {
+                "commentId": "01KG470TD10414N6Y1BEYB25B8"
+              },
+              "details": null
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "url": "/v1/posts/01KG470TAQH5KPFZYGSA54R1S3/comments",
+          "input": null,
+          "output": {
+            "status_code": 200,
+            "body": {
+              "code": "SUCCESS",
+              "message": "",
+              "data": [
+                {
+                  "commentId": "01KG470TD10414N6Y1BEYB25B8",
+                  "postId": "01KG470TAQH5KPFZYGSA54R1S3",
+                  "content": "Comment 3",
+                  "author": {
+                    "userId": "01KG470STVPAGXH4HBA9D7E3W9",
+                    "nickname": "commenter",
+                    "profileImageUrl": null
+                  },
+                  "createdAt": "2026-01-29T15:28:30",
+                  "updatedAt": null
+                },
+                {
+                  "commentId": "01KG470TCBK19R9KFKC5HHKBVK",
+                  "postId": "01KG470TAQH5KPFZYGSA54R1S3",
+                  "content": "Comment 2",
+                  "author": {
+                    "userId": "01KG470STVPAGXH4HBA9D7E3W9",
+                    "nickname": "commenter",
+                    "profileImageUrl": null
+                  },
+                  "createdAt": "2026-01-29T15:28:30",
+                  "updatedAt": null
+                },
+                {
+                  "commentId": "01KG470TBN8EVNGSA3J5CYFZQP",
+                  "postId": "01KG470TAQH5KPFZYGSA54R1S3",
+                  "content": "Comment 1",
+                  "author": {
+                    "userId": "01KG470STVPAGXH4HBA9D7E3W9",
+                    "nickname": "commenter",
+                    "profileImageUrl": null
+                  },
+                  "createdAt": "2026-01-29T15:28:30",
+                  "updatedAt": null
+                }
+              ],
+              "details": null
+            }
+          }
+        }
+      ],
+      "message": null
+    },
+    {
+      "nodeid": "test/test_api.py::test_comment_lifecycle_and_cache",
+      "status": "passed",
+      "duration": 0.6277512500091689,
       "calls": [
         {
           "method": "POST",
           "url": "/v1/auth/signup",
           "input": {
             "email": "c@t.com",
-            "password": "password123",
+            "password": "Password123!",
             "nickname": "comm"
           },
           "output": {
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                "userId": "01KG470TP6B698YTGTT45A08B0",
                 "email": "c@t.com",
                 "nickname": "comm",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:48.652371",
+                "createdAt": "2026-01-29T15:28:31",
                 "updatedAt": null
               },
               "details": null
@@ -882,19 +1530,19 @@
           "url": "/v1/auth/login",
           "input": {
             "email": "c@t.com",
-            "password": "password123"
+            "password": "Password123!"
           },
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                "userId": "01KG470TP6B698YTGTT45A08B0",
                 "email": "c@t.com",
                 "nickname": "comm",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:48.652371",
+                "createdAt": "2026-01-29T15:28:31",
                 "updatedAt": null
               },
               "details": null
@@ -912,22 +1560,23 @@
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "postId": "01KFFE4GR0MDTPGV85XT9HN3HZ",
+                "postId": "01KG470V69SGVQY14AFRDEHA7S",
                 "title": "Post",
                 "content": "Content",
                 "likeCount": 0,
                 "commentCount": 0,
                 "hits": 0,
                 "author": {
-                  "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                  "userId": "01KG470TP6B698YTGTT45A08B0",
                   "nickname": "comm",
                   "profileImageUrl": null
                 },
                 "file": null,
-                "createdAt": "2026-01-21T13:48:48.896896",
-                "updatedAt": null
+                "createdAt": "2026-01-29T15:28:31",
+                "updatedAt": null,
+                "isLiked": false
               },
               "details": null
             }
@@ -935,7 +1584,7 @@
         },
         {
           "method": "POST",
-          "url": "/v1/posts/01KFFE4GR0MDTPGV85XT9HN3HZ/comments",
+          "url": "/v1/posts/01KG470V69SGVQY14AFRDEHA7S/comments",
           "input": {
             "content": "First Comment"
           },
@@ -943,9 +1592,9 @@
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "commentId": "01KFFE4GRBN977YQ9DK7DM3WZY"
+                "commentId": "01KG470V72633G00PA5M9R9W6Q"
               },
               "details": null
             }
@@ -953,28 +1602,29 @@
         },
         {
           "method": "GET",
-          "url": "/v1/posts/01KFFE4GR0MDTPGV85XT9HN3HZ",
+          "url": "/v1/posts/01KG470V69SGVQY14AFRDEHA7S",
           "input": null,
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "postId": "01KFFE4GR0MDTPGV85XT9HN3HZ",
+                "postId": "01KG470V69SGVQY14AFRDEHA7S",
                 "title": "Post",
                 "content": "Content",
                 "likeCount": 0,
                 "commentCount": 1,
                 "hits": 1,
                 "author": {
-                  "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                  "userId": "01KG470TP6B698YTGTT45A08B0",
                   "nickname": "comm",
                   "profileImageUrl": null
                 },
                 "file": null,
-                "createdAt": "2026-01-21T13:48:48.896896",
-                "updatedAt": null
+                "createdAt": "2026-01-29T15:28:31",
+                "updatedAt": null,
+                "isLiked": false
               },
               "details": null
             }
@@ -982,7 +1632,7 @@
         },
         {
           "method": "PATCH",
-          "url": "/v1/posts/01KFFE4GR0MDTPGV85XT9HN3HZ/comments/01KFFE4GRBN977YQ9DK7DM3WZY",
+          "url": "/v1/posts/01KG470V69SGVQY14AFRDEHA7S/comments/01KG470V72633G00PA5M9R9W6Q",
           "input": {
             "content": "Updated Comment"
           },
@@ -990,18 +1640,18 @@
             "status_code": 200,
             "body": {
               "code": "UPDATED",
-              "message": "리소스가 성공적으로 수정되었습니다.",
+              "message": "",
               "data": {
-                "commentId": "01KFFE4GRBN977YQ9DK7DM3WZY",
-                "postId": "01KFFE4GR0MDTPGV85XT9HN3HZ",
+                "commentId": "01KG470V72633G00PA5M9R9W6Q",
+                "postId": "01KG470V69SGVQY14AFRDEHA7S",
                 "content": "Updated Comment",
                 "author": {
-                  "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                  "userId": "01KG470TP6B698YTGTT45A08B0",
                   "nickname": "comm",
                   "profileImageUrl": null
                 },
-                "createdAt": "2026-01-21T13:48:48.907098",
-                "updatedAt": "2026-01-21T13:48:48.911948"
+                "createdAt": "2026-01-29T15:28:31",
+                "updatedAt": "2026-01-29T15:28:31"
               },
               "details": null
             }
@@ -1009,15 +1659,15 @@
         },
         {
           "method": "DELETE",
-          "url": "/v1/posts/01KFFE4GR0MDTPGV85XT9HN3HZ/comments/01KFFE4GRBN977YQ9DK7DM3WZY",
+          "url": "/v1/posts/01KG470V69SGVQY14AFRDEHA7S/comments/01KG470V72633G00PA5M9R9W6Q",
           "input": null,
           "output": {
             "status_code": 200,
             "body": {
               "code": "DELETED",
-              "message": "리소스가 성공적으로 삭제되었습니다.",
+              "message": "",
               "data": {
-                "commentId": "01KFFE4GRBN977YQ9DK7DM3WZY",
+                "commentId": "01KG470V72633G00PA5M9R9W6Q",
                 "message": "댓글이 삭제되었습니다"
               },
               "details": null
@@ -1026,28 +1676,29 @@
         },
         {
           "method": "GET",
-          "url": "/v1/posts/01KFFE4GR0MDTPGV85XT9HN3HZ",
+          "url": "/v1/posts/01KG470V69SGVQY14AFRDEHA7S",
           "input": null,
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "postId": "01KFFE4GR0MDTPGV85XT9HN3HZ",
+                "postId": "01KG470V69SGVQY14AFRDEHA7S",
                 "title": "Post",
                 "content": "Content",
                 "likeCount": 0,
                 "commentCount": 0,
                 "hits": 2,
                 "author": {
-                  "userId": "01KFFE4G8XW8NBTJP6CXS3EE8S",
+                  "userId": "01KG470TP6B698YTGTT45A08B0",
                   "nickname": "comm",
                   "profileImageUrl": null
                 },
                 "file": null,
-                "createdAt": "2026-01-21T13:48:48.896896",
-                "updatedAt": null
+                "createdAt": "2026-01-29T15:28:31",
+                "updatedAt": null,
+                "isLiked": false
               },
               "details": null
             }
@@ -1057,29 +1708,29 @@
       "message": null
     },
     {
-      "nodeid": "Week3/test/test_api.py::test_image_upload_and_directory_creation",
+      "nodeid": "test/test_api.py::test_image_upload_and_directory_creation",
       "status": "passed",
-      "duration": 0.48167712499889603,
+      "duration": 0.5434346249967348,
       "calls": [
         {
           "method": "POST",
           "url": "/v1/auth/signup",
           "input": {
             "email": "f@t.com",
-            "password": "password123",
+            "password": "Password123!",
             "nickname": "file"
           },
           "output": {
             "status_code": 201,
             "body": {
               "code": "CREATED",
-              "message": "리소스가 성공적으로 생성되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4GRN4PNJA3PJGH735G1E",
+                "userId": "01KG470VHW2ZA3HXWE5H1WE88T",
                 "email": "f@t.com",
                 "nickname": "file",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:49.155538",
+                "createdAt": "2026-01-29T15:28:32",
                 "updatedAt": null
               },
               "details": null
@@ -1091,19 +1742,19 @@
           "url": "/v1/auth/login",
           "input": {
             "email": "f@t.com",
-            "password": "password123"
+            "password": "Password123!"
           },
           "output": {
             "status_code": 200,
             "body": {
               "code": "SUCCESS",
-              "message": "요청이 성공적으로 처리되었습니다.",
+              "message": "",
               "data": {
-                "userId": "01KFFE4GRN4PNJA3PJGH735G1E",
+                "userId": "01KG470VHW2ZA3HXWE5H1WE88T",
                 "email": "f@t.com",
                 "nickname": "file",
                 "profileImageUrl": null,
-                "createdAt": "2026-01-21T13:48:49.155538",
+                "createdAt": "2026-01-29T15:28:32",
                 "updatedAt": null
               },
               "details": null
@@ -1118,9 +1769,9 @@
             "status_code": 201,
             "body": {
               "code": "UPDATED",
-              "message": "리소스가 성공적으로 수정되었습니다.",
+              "message": "",
               "data": {
-                "profileImageUrl": "/public/image/profile/336eee3c-36d5-4017-983b-26c431b5e0ad.png"
+                "profileImageUrl": "/public/image/profile/b18c7cfa-e863-44ad-9275-7ddb50cb2e07.png"
               },
               "details": null
             }
@@ -1134,9 +1785,9 @@
             "status_code": 201,
             "body": {
               "code": "UPDATED",
-              "message": "리소스가 성공적으로 수정되었습니다.",
+              "message": "",
               "data": {
-                "postFileUrl": "/public/image/post/dd1521c3-5109-4ef0-a3f0-b569814e1bba.jpg"
+                "postFileUrl": "/public/image/post/3a09c66a-94a0-491e-8dca-41139170858e.jpg"
               },
               "details": null
             }

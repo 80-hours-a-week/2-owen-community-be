@@ -7,20 +7,16 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../2-owe
 if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
 
-from utils.id_utils import generate_id
+from utils.common.id_utils import generate_id
 from models.user_model import user_model
 from models.post_model import post_model
 from models.comment_model import comment_model
+from utils.test.test_utils import seed_database
 
 @pytest.fixture(autouse=True)
 def setup_and_teardown():
-    # 데이터베이스 초기화 (최적화된 매핑 포함)
-    user_model.usersDb = {}
-    user_model.emailMap = {}
-    user_model.nicknameMap = {}
-    post_model.postsDb = {}
-    post_model.likesDb = {}
-    comment_model.commentsDb = {}
+    # 데이터베이스 초기화
+    seed_database()
     yield
 
 # --- Auth API Tests ---
@@ -28,8 +24,8 @@ def setup_and_teardown():
 def test_signup_success(api_client):
     """회원가입 성공 케이스"""
     response = api_client.post("/v1/auth/signup", json={
-        "email": "test@example.com", 
-        "password": "password123", 
+        "email": "test@example.com",
+        "password": "Password123!",
         "nickname": "tester"
     })
     assert response.status_code == 201
@@ -54,14 +50,14 @@ def test_signup_failure_duplicate(api_client):
     """회원가입 실패: 이메일 또는 닉네임 중복"""
     api_client.post("/v1/auth/signup", json={
         "email": "dup@example.com", 
-        "password": "password123", 
+        "password": "Password123!", 
         "nickname": "user1"
     })
     
     # 이메일 중복
     response = api_client.post("/v1/auth/signup", json={
         "email": "dup@example.com", 
-        "password": "password123", 
+        "password": "Password123!", 
         "nickname": "user2"
     })
     assert response.status_code == 409
@@ -71,7 +67,7 @@ def test_signup_failure_duplicate(api_client):
     # 닉네임 중복
     response = api_client.post("/v1/auth/signup", json={
         "email": "other@example.com", 
-        "password": "password123", 
+        "password": "Password123!", 
         "nickname": "user1"
     })
     assert response.status_code == 409
@@ -82,14 +78,14 @@ def test_login_lifecycle(api_client):
     """로그인, 내 정보 조회, 로그아웃 라이프사이클"""
     api_client.post("/v1/auth/signup", json={
         "email": "login@example.com", 
-        "password": "password123", 
+        "password": "Password123!", 
         "nickname": "tester"
     })
     
     # 로그인 성공
     resp = api_client.post("/v1/auth/login", json={
         "email": "login@example.com", 
-        "password": "password123"
+        "password": "Password123!"
     })
     assert resp.status_code == 200
     assert resp.json()["data"]["nickname"] == "tester"
@@ -111,7 +107,7 @@ def test_login_failure(api_client):
     """로그인 실패 케이스"""
     api_client.post("/v1/auth/signup", json={
         "email": "fail@example.com", 
-        "password": "password123", 
+        "password": "Password123!", 
         "nickname": "tester"
     })
     
@@ -126,7 +122,7 @@ def test_login_failure(api_client):
     # 존재하지 않는 이메일
     resp = api_client.post("/v1/auth/login", json={
         "email": "none@example.com", 
-        "password": "password123"
+        "password": "Password123!"
     })
     assert resp.status_code == 401
 
@@ -136,12 +132,12 @@ def test_user_update_success(api_client):
     """사용자 정보 수정 및 비밀번호 변경 성공"""
     signup_resp = api_client.post("/v1/auth/signup", json={
         "email": "update@test.com", 
-        "password": "password123", 
+        "password": "Password123!", 
         "nickname": "oldNick"
     })
     api_client.post("/v1/auth/login", json={
         "email": "update@test.com", 
-        "password": "password123"
+        "password": "Password123!"
     })
     
     # 닉네임 수정
@@ -150,14 +146,14 @@ def test_user_update_success(api_client):
     assert resp.json()["data"]["nickname"] == "newNick"
     
     # 비밀번호 변경
-    resp = api_client.patch("/v1/users/password", json={"password": "newpassword123"})
+    resp = api_client.patch("/v1/users/password", json={"password": "newPassword123!"})
     assert resp.status_code == 200
     
     # 새 비밀번호로 로그인 확인
     api_client.post("/v1/auth/logout")
     resp = api_client.post("/v1/auth/login", json={
         "email": "update@test.com", 
-        "password": "newpassword123"
+        "password": "newPassword123!"
     })
     assert resp.status_code == 200
 
@@ -165,12 +161,12 @@ def test_user_delete_success(api_client):
     """회원 탈퇴 성공"""
     api_client.post("/v1/auth/signup", json={
         "email": "del@test.com", 
-        "password": "password123", 
-        "nickname": "to_be_deleted"
+        "password": "Password123!", 
+        "nickname": "deleted"
     })
     api_client.post("/v1/auth/login", json={
         "email": "del@test.com", 
-        "password": "password123"
+        "password": "Password123!"
     })
     
     # 탈퇴
@@ -180,16 +176,58 @@ def test_user_delete_success(api_client):
     # 탈퇴 후 로그인 불가 확인
     resp = api_client.post("/v1/auth/login", json={
         "email": "del@test.com", 
-        "password": "password123"
+        "password": "Password123!"
     })
     assert resp.status_code == 401
 
 # --- Post API Tests ---
 
+def test_post_list_pagination(api_client):
+    """게시글 목록 조회 및 페이징 기능 검증 (인피니티 스크롤 대응)"""
+    api_client.post("/v1/auth/signup", json={"email": "list@t.com", "password": "Password123!", "nickname": "lister"})
+    api_client.post("/v1/auth/login", json={"email": "list@t.com", "password": "Password123!"})
+
+    # 여러 게시글 생성 (페이징 테스트용)
+    post_ids = []
+    for i in range(5):
+        resp = api_client.post("/v1/posts", json={
+            "title": f"Test Title {i+1}",
+            "content": f"Test Content {i+1}"
+        })
+        assert resp.status_code == 201
+        post_ids.append(resp.json()["data"]["postId"])
+
+    # 기본 목록 조회 (limit=10, offset=0)
+    resp = api_client.get("/v1/posts")
+    assert resp.status_code == 200
+    data = resp.json()["data"]
+    assert len(data["items"]) == 5  # 생성한 5개 게시글 모두 조회
+    assert data["pagination"]["totalCount"] == 5
+    assert data["pagination"]["offset"] == 0
+    assert data["pagination"]["limit"] == 10
+
+    # 페이징 테스트 (limit=2, offset=0)
+    resp = api_client.get("/v1/posts?limit=2&offset=0")
+    assert resp.status_code == 200
+    data = resp.json()["data"]
+    assert len(data["items"]) == 2
+    assert data["pagination"]["totalCount"] == 5
+    assert data["pagination"]["offset"] == 0
+    assert data["pagination"]["limit"] == 2
+
+    # 다음 페이지 조회 (limit=2, offset=2)
+    resp = api_client.get("/v1/posts?limit=2&offset=2")
+    assert resp.status_code == 200
+    data = resp.json()["data"]
+    assert len(data["items"]) == 2
+    assert data["pagination"]["totalCount"] == 5
+    assert data["pagination"]["offset"] == 2
+    assert data["pagination"]["limit"] == 2
+
 def test_post_full_lifecycle(api_client):
     """게시글 생성, 조회, 수정, 좋아요, 삭제 전체 흐름"""
-    api_client.post("/v1/auth/signup", json={"email": "p@t.com", "password": "password123", "nickname": "writer"})
-    api_client.post("/v1/auth/login", json={"email": "p@t.com", "password": "password123"})
+    api_client.post("/v1/auth/signup", json={"email": "p@t.com", "password": "Password123!", "nickname": "writer"})
+    api_client.post("/v1/auth/login", json={"email": "p@t.com", "password": "Password123!"})
     
     # 1. 생성
     resp = api_client.post("/v1/posts", json={"title": "Test Title", "content": "Test Content"})
@@ -214,13 +252,13 @@ def test_post_full_lifecycle(api_client):
     assert resp.json()["data"]["title"] == "Updated Title"
     
     # 5. 권한 없는 수정 시도
-    api_client.post("/v1/auth/signup", json={"email": "h@t.com", "password": "password123", "nickname": "hacker"})
-    api_client.post("/v1/auth/login", json={"email": "h@t.com", "password": "password123"})
+    api_client.post("/v1/auth/signup", json={"email": "h@t.com", "password": "Password123!", "nickname": "hacker"})
+    api_client.post("/v1/auth/login", json={"email": "h@t.com", "password": "Password123!"})
     resp = api_client.patch(f"/v1/posts/{postId}", json={"title": "Hacked", "content": "Hacked Content"})
     assert resp.status_code == 403
     
     # 6. 삭제
-    api_client.post("/v1/auth/login", json={"email": "p@t.com", "password": "password123"})
+    api_client.post("/v1/auth/login", json={"email": "p@t.com", "password": "Password123!"})
     resp = api_client.delete(f"/v1/posts/{postId}")
     assert resp.status_code == 200
     
@@ -230,10 +268,37 @@ def test_post_full_lifecycle(api_client):
 
 # --- Comment API Tests ---
 
+def test_comment_list(api_client):
+    """댓글 목록 조회 기능 검증"""
+    api_client.post("/v1/auth/signup", json={"email": "commentlist@t.com", "password": "Password123!", "nickname": "commenter"})
+    api_client.post("/v1/auth/login", json={"email": "commentlist@t.com", "password": "Password123!"})
+
+    # 게시글 생성
+    post_resp = api_client.post("/v1/posts", json={"title": "Post for Comments", "content": "Content"})
+    postId = post_resp.json()["data"]["postId"]
+
+    # 여러 댓글 생성
+    comment_ids = []
+    for i in range(3):
+        resp = api_client.post(f"/v1/posts/{postId}/comments", json={"content": f"Comment {i+1}"})
+        assert resp.status_code == 201
+        comment_ids.append(resp.json()["data"]["commentId"])
+
+    # 댓글 목록 조회
+    resp = api_client.get(f"/v1/posts/{postId}/comments")
+    assert resp.status_code == 200
+    comments = resp.json()["data"]
+    assert len(comments) == 3  # 생성한 3개 댓글 모두 조회
+
+    # 각 댓글이 올바르게 표시되는지 확인 (최신순 정렬이므로 역순)
+    for i, comment in enumerate(comments):
+        assert comment["content"] == f"Comment {3-i}"
+        assert comment["author"]["nickname"] == "commenter"
+
 def test_comment_lifecycle_and_cache(api_client):
     """댓글 작성, 수정, 삭제 및 게시글 내 캐시 카운트 검증"""
-    api_client.post("/v1/auth/signup", json={"email": "c@t.com", "password": "password123", "nickname": "comm"})
-    api_client.post("/v1/auth/login", json={"email": "c@t.com", "password": "password123"})
+    api_client.post("/v1/auth/signup", json={"email": "c@t.com", "password": "Password123!", "nickname": "comm"})
+    api_client.post("/v1/auth/login", json={"email": "c@t.com", "password": "Password123!"})
     
     # 게시글 생성
     post_resp = api_client.post("/v1/posts", json={"title": "Post", "content": "Content"})
@@ -265,8 +330,8 @@ def test_comment_lifecycle_and_cache(api_client):
 
 def test_image_upload_and_directory_creation(api_client):
     """이미지 업로드 기능 검증"""
-    api_client.post("/v1/auth/signup", json={"email": "f@t.com", "password": "password123", "nickname": "file"})
-    api_client.post("/v1/auth/login", json={"email": "f@t.com", "password": "password123"})
+    api_client.post("/v1/auth/signup", json={"email": "f@t.com", "password": "Password123!", "nickname": "file"})
+    api_client.post("/v1/auth/login", json={"email": "f@t.com", "password": "Password123!"})
     
     # 프로필 이미지 업로드
     files = {"profileImage": ("profile.png", b"fake_image_content", "image/png")}
