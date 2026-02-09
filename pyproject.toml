@@ -29,6 +29,7 @@ dependencies = [
     "bcrypt==5.0.0",
     "aiomysql",
     "Faker",
+    "cryptography>=41.0.0",
 ]
 
 [tool.setuptools.packages.find]

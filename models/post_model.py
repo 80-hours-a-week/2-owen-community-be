@@ -31,6 +31,7 @@ class PostModel:
             "hits": row.get("hits", 0),
             "likeCount": row.get("like_count", 0),
             "commentCount": row.get("comment_count", 0),
+            "isLiked": bool(row.get("is_liked", 0)),
         }
 
     async def clear(self):
@@ -48,7 +49,7 @@ class PostModel:
         content: str,
         authorId: Union[str, any],
         authorNickname: str,
-        fileUrl: Optional[str] = None,
+        fileUrls: Optional[List[str]] = None,
     ) -> Dict:
         """게시글 생성"""
         postId = self.getNextPostId()
@@ -59,16 +60,22 @@ class PostModel:
             INSERT INTO posts (post_id, user_id, title, content, post_image_url, hits, comment_count, created_at)
             VALUES (%s, %s, %s, %s, %s, 0, 0, NOW())
             """,
-            (postId, authorIdStr, title, content, fileUrl),
+            (postId, authorIdStr, title, content, None),  # post_image_url is now NULL
         )
+        
+        # 여러 이미지 저장
+        if fileUrls:
+            await self.addPostImages(postId, fileUrls)
 
         post = await self.getPostById(postId)
         if post:
             post["authorNickname"] = authorNickname
         return post
 
-    async def getPosts(self, limit: int = 10, offset: int = 0) -> Dict[str, Union[List[Dict], int]]:
+    async def getPosts(self, limit: int = 10, offset: int = 0, current_user_id: Optional[str] = None) -> Dict[str, Union[List[Dict], int]]:
         """게시글 목록 조회 (페이징 지원)"""
+        current_user_id_str = self._normalizeId(current_user_id) if current_user_id else None
+        
         rows = await fetch_all(
             """
             SELECT
@@ -83,7 +90,8 @@ class PostModel:
                 p.updated_at,
                 p.hits,
                 p.comment_count,
-                COUNT(pl.user_id) AS like_count
+                COUNT(pl.user_id) AS like_count,
+                MAX(CASE WHEN pl.user_id = %s THEN 1 ELSE 0 END) AS is_liked
             FROM posts p
             LEFT JOIN users u ON u.user_id = p.user_id
             LEFT JOIN post_likes pl ON pl.post_id = p.post_id
@@ -103,7 +111,7 @@ class PostModel:
             ORDER BY p.created_at DESC
             LIMIT %s OFFSET %s
             """,
-            (limit, offset),
+            (current_user_id_str, limit, offset),
         )
 
         total_row = await fetch_one("SELECT COUNT(*) AS total FROM posts WHERE deleted_at IS NULL")
@@ -167,16 +175,16 @@ class PostModel:
         postId: Union[str, any],
         title: str,
         content: str,
-        fileUrl: Optional[str] = None,
+        fileUrls: Optional[List[str]] = None,
     ) -> Optional[Dict]:
         """게시글 수정"""
         postIdStr = self._normalizeId(postId)
         fields = ["title = %s", "content = %s", "updated_at = NOW()"]
         params = [title, content]
 
-        if fileUrl is not None:
-            fields.append("post_image_url = %s")
-            params.append(fileUrl)
+        # post_image_url은 NULL로 설정 (이제 post_images 테이블 사용)
+        fields.append("post_image_url = %s")
+        params.append(None)
 
         params.append(postIdStr)
         await execute(
@@ -187,6 +195,13 @@ class PostModel:
             """,
             params,
         )
+        
+        # 기존 이미지 삭제 후 새 이미지 추가
+        if fileUrls is not None:
+            await self.deletePostImages(postIdStr)
+            if fileUrls:  # 빈 리스트가 아니면
+                await self.addPostImages(postIdStr, fileUrls)
+        
         return await self.getPostById(postIdStr)
 
     async def deletePost(self, postId: Union[str, any]) -> bool:
@@ -265,6 +280,50 @@ class PostModel:
             (postIdStr, userIdStr),
         )
         return row is not None
+
+    async def getPostImages(self, postId: Union[str, any]) -> List[Dict]:
+        """특정 게시글의 이미지 리스트 조회"""
+        postIdStr = self._normalizeId(postId)
+        rows = await fetch_all(
+            "SELECT image_id, post_id, image_url, sort_order FROM post_images WHERE post_id = %s ORDER BY sort_order ASC",
+            (postIdStr,),
+        )
+        return [
+            {
+                "imageId": row["image_id"],
+                "postId": row["post_id"],
+                "imageUrl": row["image_url"],
+                "sortOrder": row["sort_order"],
+            }
+            for row in rows
+        ]
+
+    async def addPostImages(self, postId: Union[str, any], imageUrls: List[str]) -> int:
+        """게시글에 여러 이미지 추가"""
+        if not imageUrls:
+            return 0
+        
+        postIdStr = self._normalizeId(postId)
+        inserted_count = 0
+        
+        for idx, imageUrl in enumerate(imageUrls):
+            imageId = generate_id()
+            await execute(
+                "INSERT INTO post_images (image_id, post_id, image_url, sort_order, created_at) VALUES (%s, %s, %s, %s, NOW())",
+                (imageId, postIdStr, imageUrl, idx),
+            )
+            inserted_count += 1
+        
+        return inserted_count
+
+    async def deletePostImages(self, postId: Union[str, any]) -> int:
+        """게시글의 모든 이미지 삭제"""
+        postIdStr = self._normalizeId(postId)
+        affected = await execute(
+            "DELETE FROM post_images WHERE post_id = %s",
+            (postIdStr,),
+        )
+        return affected
 
 
 # Model 인스턴스 생성

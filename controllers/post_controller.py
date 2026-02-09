@@ -26,16 +26,21 @@ class PostController:
             profileImageUrl=profile_image_url
         )
 
-        post_file = None
-        if post.get("fileUrl"):
-            post_file = PostFile(
-                fileId=post["postId"],
-                fileUrl=post["fileUrl"]
-            )
-
-        is_liked = None
-        if current_user_id:
+        is_liked = post.get("isLiked")
+        if is_liked is None and current_user_id:
             is_liked = await post_model.isLikedByUser(post["postId"], current_user_id)
+        
+        # 다중 이미지 처리
+        post_images = await post_model.getPostImages(post["postId"])
+        from schemas import PostImage
+        files_list = [
+            PostImage(
+                imageId=img["imageId"],
+                imageUrl=img["imageUrl"],
+                sortOrder=img["sortOrder"]
+            )
+            for img in post_images
+        ] if post_images else None
 
         return PostResponse(
             postId=post["postId"],
@@ -45,19 +50,19 @@ class PostController:
             commentCount=post.get("commentCount", 0), # 캐시된 값 사용
             hits=post["hits"],
             author=author_data,
-            file=post_file,
+            files=files_list,
             createdAt=post["createdAt"],
             updatedAt=post.get("updatedAt"),
             isLiked=is_liked,
         )
 
-    async def getAllPosts(self, limit: int = 10, offset: int = 0) -> PaginatedData[List[PostResponse]]:
+    async def getAllPosts(self, limit: int = 10, offset: int = 0, current_user_id: Optional[str] = None) -> PaginatedData[List[PostResponse]]:
         """게시글 목록 조회 로직 (페이징 메타데이터 포함)"""
-        result = await post_model.getPosts(limit=limit, offset=offset)
+        result = await post_model.getPosts(limit=limit, offset=offset, current_user_id=current_user_id)
         posts_data = result["posts"]
         total_count = result["totalCount"]
 
-        formatted_posts = [await self._formatPost(post) for post in posts_data]
+        formatted_posts = [await self._formatPost(post, current_user_id=current_user_id) for post in posts_data]
         
         # 페이징 메타데이터 계산
         total_page = (total_count + limit - 1) // limit if total_count > 0 else 0
@@ -105,7 +110,7 @@ class PostController:
             content=req.content,
             authorId=user["userId"],
             authorNickname=user["nickname"],
-            fileUrl=req.fileUrl
+            fileUrls=req.fileUrls
         )
 
         return await self._formatPost(post_data, current_user_id=user["userId"])
@@ -127,7 +132,7 @@ class PostController:
             postId=postId,
             title=req.title,
             content=req.content,
-            fileUrl=req.fileUrl
+            fileUrls=req.fileUrls
         )
 
         return await self._formatPost(updated_post, current_user_id=user["userId"])

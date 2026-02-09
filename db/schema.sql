@@ -69,3 +69,15 @@ CREATE TABLE IF NOT EXISTS sessions (
 
 CREATE INDEX idx_expires ON sessions(expires_at);
 CREATE INDEX idx_user_expires ON sessions(user_id, expires_at);
+
+CREATE TABLE IF NOT EXISTS post_images (
+    image_id VARCHAR(50) PRIMARY KEY,
+    post_id VARCHAR(26) NOT NULL,
+    image_url VARCHAR(512) NOT NULL,
+    sort_order INT UNSIGNED NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_post_images_post FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE INDEX idx_post_images_post_order ON post_images(post_id, sort_order ASC);
+CREATE INDEX idx_post_images_post ON post_images(post_id);

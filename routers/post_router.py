@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from utils.common.response import StandardResponse
 from utils.errors.error_codes import SuccessCode
 from controllers.post_controller import post_controller
-from schemas import PostCreateRequest, PostUpdateRequest, PostResponse, PostImageUploadResponse, StandardResponse as StandardResponseSchema, PaginatedResponse as PaginatedResponseSchema
+from schemas import PostCreateRequest, PostUpdateRequest, PostResponse, PostImageUploadResponse, PostImagesUploadResponse, StandardResponse as StandardResponseSchema, PaginatedResponse as PaginatedResponseSchema
 from utils.middleware.auth_middleware import get_current_user, get_optional_user
 from utils.common.file_utils import save_upload_file
 
@@ -13,14 +13,15 @@ router = APIRouter(prefix="/v1/posts", tags=["게시글"])
 @router.get("", response_model=PaginatedResponseSchema[List[PostResponse]], status_code=status.HTTP_200_OK)
 async def get_posts(
     offset: int = Query(0, ge=0),
-    limit: int = Query(10, ge=1, le=100)
+    limit: int = Query(10, ge=1, le=100),
+    user: Optional[Dict] = Depends(get_optional_user)
 ):
     """
     게시글 목록 조회 (페이징 메타데이터 포함)
     - 모든 게시글을 최신순으로 반환
     - 인증 불필요
     """
-    data = await post_controller.getAllPosts(limit=limit, offset=offset)
+    data = await post_controller.getAllPosts(limit=limit, offset=offset, current_user_id=(user or {}).get("userId"))
     return StandardResponse.success(SuccessCode.SUCCESS, data)
 
 
@@ -76,11 +77,27 @@ async def delete_post(postId: str, user: Dict = Depends(get_current_user)):
 @router.post("/image", response_model=StandardResponseSchema[PostImageUploadResponse], status_code=status.HTTP_201_CREATED)
 async def upload_post_image(postFile: UploadFile = File(...), user: Dict = Depends(get_current_user)):
     """
-    게시글 이미지 업로드
+    게시글 이미지 업로드 (단일)
     - 실제 로컬 폴더에 이미지 저장 및 URL 반환
+    - 하위 호환성 유지용
     """
     fileUrl = save_upload_file(postFile, "post")
     return StandardResponse.success(SuccessCode.UPDATED, {"postFileUrl": fileUrl})
+
+
+@router.post("/images", response_model=StandardResponseSchema[PostImagesUploadResponse], status_code=status.HTTP_201_CREATED)
+async def upload_post_images(postFiles: List[UploadFile] = File(...), user: Dict = Depends(get_current_user)):
+    """
+    게시글 이미지 업로드 (다중, 최대 5장)
+    - 실제 로컬 폴더에 이미지 저장 및 URL 리스트 반환
+    """
+    if len(postFiles) > 5:
+        from utils.errors.exceptions import APIError
+        from utils.errors.error_codes import ErrorCode
+        raise APIError(ErrorCode.BAD_REQUEST, {"message": "최대 5개의 이미지만 업로드할 수 있습니다"})
+    
+    fileUrls = [save_upload_file(postFile, "post") for postFile in postFiles]
+    return StandardResponse.success(SuccessCode.UPDATED, {"postFileUrls": fileUrls})
 
 
 @router.post("/{postId}/likes", response_model=StandardResponseSchema[Dict], status_code=status.HTTP_201_CREATED)

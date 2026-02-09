@@ -966,3 +966,282 @@
 2026-02-02 14:36:22,886 - [2152504572dadfa8] - access_logger - INFO - Response: POST /v1/posts/01KGEDKT6HVDM69X2TA5Z35E4J/likes - Status: 201 - Time: 9.01ms
 2026-02-02 14:36:56,688 - [8b6e350a5f6003d0] - access_logger - INFO - Request: POST /v1/posts/01KGEDKT6HVDM69X2TA5Z35E4J/likes - IP: 127.0.0.1
 2026-02-02 14:36:56,729 - [8b6e350a5f6003d0] - access_logger - INFO - Response: POST /v1/posts/01KGEDKT6HVDM69X2TA5Z35E4J/likes - Status: 201 - Time: 41.60ms
+2026-02-09 14:20:52,624 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 14:23:17,524 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 14:29:57,739 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 14:30:05,906 - [d52e0709d051b7ed] - access_logger - INFO - Request: OPTIONS /v1/auth/login - IP: 127.0.0.1
+2026-02-09 14:30:05,907 - [d52e0709d051b7ed] - access_logger - INFO - Response: OPTIONS /v1/auth/login - Status: 200 - Time: 0.48ms
+2026-02-09 14:30:05,909 - [3a20917c87d014a7] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 14:30:06,224 - [3a20917c87d014a7] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 315.00ms
+2026-02-09 14:32:56,367 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 14:33:04,288 - [738e1a1883392548] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 14:33:04,538 - [738e1a1883392548] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 250.82ms
+2026-02-09 14:40:41,877 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 14:40:50,982 - [ef43f6b0bf4dac5a] - access_logger - INFO - Request: OPTIONS /v1/auth/login - IP: 127.0.0.1
+2026-02-09 14:40:50,983 - [ef43f6b0bf4dac5a] - access_logger - INFO - Response: OPTIONS /v1/auth/login - Status: 200 - Time: 0.95ms
+2026-02-09 14:40:50,990 - [6635bb3b7bdd7380] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 14:40:51,265 - [6635bb3b7bdd7380] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 275.64ms
+2026-02-09 14:43:01,457 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 14:43:07,901 - [6bd1245de8d18e02] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 14:43:08,155 - [6bd1245de8d18e02] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 253.81ms
+2026-02-09 14:45:58,389 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 14:46:08,264 - [393b930296fa06eb] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 14:46:08,521 - [393b930296fa06eb] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 256.83ms
+2026-02-09 14:56:49,616 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 14:57:02,947 - [7a89d4451c1461fe] - access_logger - INFO - Request: OPTIONS /v1/auth/login - IP: 127.0.0.1
+2026-02-09 14:57:02,948 - [7a89d4451c1461fe] - access_logger - INFO - Response: OPTIONS /v1/auth/login - Status: 200 - Time: 1.19ms
+2026-02-09 14:57:02,953 - [ca4e15206dc842e0] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 14:57:03,232 - [ca4e15206dc842e0] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 278.97ms
+2026-02-09 15:00:09,811 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:00:21,083 - [e478c8ad33a4dd73] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 15:00:21,351 - [e478c8ad33a4dd73] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 267.65ms
+2026-02-09 15:00:46,906 - [e3bbb0236f126752] - access_logger - INFO - Request: OPTIONS /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:46,908 - [e3bbb0236f126752] - access_logger - INFO - Response: OPTIONS /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 200 - Time: 1.46ms
+2026-02-09 15:00:46,912 - [b9d6eb81cf01559e] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:46,936 - [b9d6eb81cf01559e] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 23.83ms
+2026-02-09 15:00:47,070 - [5c7620b4ea0775b0] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:47,087 - [5c7620b4ea0775b0] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 16.75ms
+2026-02-09 15:00:47,228 - [1bbc59323551bf5a] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:47,253 - [1bbc59323551bf5a] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 25.36ms
+2026-02-09 15:00:47,386 - [490611ec058df0b1] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:47,426 - [490611ec058df0b1] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 39.32ms
+2026-02-09 15:00:47,537 - [bb959abd04488026] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:47,553 - [bb959abd04488026] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 15.75ms
+2026-02-09 15:00:47,693 - [c0d3fc3e91e1a9f5] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:47,714 - [c0d3fc3e91e1a9f5] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 20.71ms
+2026-02-09 15:00:47,845 - [c359b5e9a60204a6] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:47,885 - [c359b5e9a60204a6] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 39.63ms
+2026-02-09 15:00:47,995 - [b5ed1e13f33a3007] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:48,007 - [b5ed1e13f33a3007] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 12.26ms
+2026-02-09 15:00:48,152 - [a2a46f2af8f567a6] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:48,177 - [a2a46f2af8f567a6] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 24.84ms
+2026-02-09 15:00:48,300 - [7b515ef2f3b05951] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:48,321 - [7b515ef2f3b05951] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 21.23ms
+2026-02-09 15:00:48,468 - [c8aaae8eff93f8d4] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:48,489 - [c8aaae8eff93f8d4] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 21.53ms
+2026-02-09 15:00:48,616 - [0a090e5b9c2c4591] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:48,630 - [0a090e5b9c2c4591] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 13.94ms
+2026-02-09 15:00:48,781 - [36b9f9682d92aaf2] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:48,816 - [36b9f9682d92aaf2] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 35.00ms
+2026-02-09 15:00:48,938 - [6364dd565eec9d05] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:48,964 - [6364dd565eec9d05] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 26.19ms
+2026-02-09 15:00:49,111 - [a5476d4bd6720173] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:49,130 - [a5476d4bd6720173] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 18.90ms
+2026-02-09 15:00:49,280 - [e565afed02bd122c] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:49,295 - [e565afed02bd122c] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 15.53ms
+2026-02-09 15:00:49,450 - [acafd69585e869ba] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:49,461 - [acafd69585e869ba] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 10.91ms
+2026-02-09 15:00:49,616 - [3ee4ee8ce8545b07] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:49,627 - [3ee4ee8ce8545b07] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 11.21ms
+2026-02-09 15:00:49,769 - [110577690fe9d7dc] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:49,785 - [110577690fe9d7dc] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 15.71ms
+2026-02-09 15:00:49,942 - [d50b9a51c0428291] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:49,970 - [d50b9a51c0428291] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 27.99ms
+2026-02-09 15:00:50,107 - [70778529bfb7f03d] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:50,146 - [70778529bfb7f03d] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 39.02ms
+2026-02-09 15:00:50,275 - [2c0c52ece5f3d823] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:50,315 - [2c0c52ece5f3d823] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 40.29ms
+2026-02-09 15:00:50,487 - [ee28a259c68dc606] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:50,501 - [ee28a259c68dc606] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 13.51ms
+2026-02-09 15:00:50,946 - [5fe552145ba3ad69] - access_logger - INFO - Request: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - IP: 127.0.0.1
+2026-02-09 15:00:50,955 - [5fe552145ba3ad69] - access_logger - INFO - Response: POST /v1/posts/01KG47SFP505Z9HTE56FZP0W7P/likes - Status: 201 - Time: 8.77ms
+2026-02-09 15:17:45,680 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:17:54,099 - [96f0b7e9f9f4a6a6] - access_logger - INFO - Request: OPTIONS /v1/auth/login - IP: 127.0.0.1
+2026-02-09 15:17:54,100 - [96f0b7e9f9f4a6a6] - access_logger - INFO - Response: OPTIONS /v1/auth/login - Status: 200 - Time: 0.29ms
+2026-02-09 15:17:54,101 - [7d7076d382db6fe8] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 15:17:54,360 - [7d7076d382db6fe8] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 258.77ms
+2026-02-09 15:19:47,690 - [124a4fd9ec30a73b] - access_logger - INFO - Request: OPTIONS /v1/auth/logout - IP: 127.0.0.1
+2026-02-09 15:19:47,692 - [124a4fd9ec30a73b] - access_logger - INFO - Response: OPTIONS /v1/auth/logout - Status: 200 - Time: 4.13ms
+2026-02-09 15:19:47,697 - [d8e4e64af53d1a09] - access_logger - INFO - Request: POST /v1/auth/logout - IP: 127.0.0.1
+2026-02-09 15:19:47,714 - [d8e4e64af53d1a09] - access_logger - INFO - Response: POST /v1/auth/logout - Status: 200 - Time: 16.61ms
+2026-02-09 15:20:06,734 - [c8ada91f47a5c233] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 15:20:07,007 - [c8ada91f47a5c233] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 272.94ms
+2026-02-09 15:20:10,256 - [5ba87a0d2bb898d5] - access_logger - INFO - Request: OPTIONS /v1/posts/01KH0FWBX6HBCW6GR3A6HT4NF8/likes - IP: 127.0.0.1
+2026-02-09 15:20:10,257 - [5ba87a0d2bb898d5] - access_logger - INFO - Response: OPTIONS /v1/posts/01KH0FWBX6HBCW6GR3A6HT4NF8/likes - Status: 200 - Time: 0.95ms
+2026-02-09 15:20:10,262 - [35b3e33c8994aa98] - access_logger - INFO - Request: POST /v1/posts/01KH0FWBX6HBCW6GR3A6HT4NF8/likes - IP: 127.0.0.1
+2026-02-09 15:20:10,278 - [35b3e33c8994aa98] - access_logger - INFO - Response: POST /v1/posts/01KH0FWBX6HBCW6GR3A6HT4NF8/likes - Status: 201 - Time: 15.73ms
+2026-02-09 15:28:29,200 - [bab7f859d544974e] - access_logger - INFO - Request: POST /v1/auth/logout - IP: 127.0.0.1
+2026-02-09 15:28:29,209 - [bab7f859d544974e] - access_logger - INFO - Response: POST /v1/auth/logout - Status: 200 - Time: 8.56ms
+2026-02-09 15:28:35,773 - [ef8ef1e95e8976b4] - access_logger - INFO - Request: OPTIONS /v1/auth/login - IP: 127.0.0.1
+2026-02-09 15:28:35,774 - [ef8ef1e95e8976b4] - access_logger - INFO - Response: OPTIONS /v1/auth/login - Status: 200 - Time: 0.52ms
+2026-02-09 15:28:35,776 - [a07da591434a9019] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 15:28:36,039 - [a07da591434a9019] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 263.08ms
+2026-02-09 15:32:44,970 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:32:58,998 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:33:01,194 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:33:20,357 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:33:57,716 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:34:26,656 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:35:07,205 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:35:09,256 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:46:18,105 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:46:29,155 - [a7bd368b3d0733de] - access_logger - INFO - Request: OPTIONS /v1/auth/login - IP: 127.0.0.1
+2026-02-09 15:46:29,156 - [a7bd368b3d0733de] - access_logger - INFO - Response: OPTIONS /v1/auth/login - Status: 200 - Time: 0.49ms
+2026-02-09 15:46:29,158 - [26eeca7e1f51daa2] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 15:46:29,433 - [26eeca7e1f51daa2] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 275.75ms
+2026-02-09 15:46:31,026 - [06c6651c6264cb2b] - db - ERROR - DB Error: (1146, "Table 'community.post_images' doesn't exist") | Query: SELECT image_id, post_id, image_url, sort_order FROM post_images WHERE post_id = %s ORDER BY sort_order ASC | Params: ('01KH0FWBX6HBCW6GR3A6HT4NF8',)
+2026-02-09 15:46:31,028 - [N/A] - utils.errors.exception_handlers - ERROR - Unexpected error: (1146, "Table 'community.post_images' doesn't exist") | Path: /v1/posts | Method: GET
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/anyio/streams/memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/anyio/streams/memory.py", line 93, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 151, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/anyio/streams/memory.py", line 118, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eskim00/Documents/Programming/KDT_AWS/Assignment/2-owen-community-be/utils/middleware/request_id_middleware.py", line 21, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eskim00/Documents/Programming/KDT_AWS/Assignment/2-owen-community-be/utils/middleware/access_log_middleware.py", line 35, in dispatch
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eskim00/Documents/Programming/KDT_AWS/Assignment/2-owen-community-be/utils/middleware/db_session_middleware.py", line 35, in dispatch
+    response: Response = await call_next(request)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eskim00/Documents/Programming/KDT_AWS/Assignment/2-owen-community-be/utils/middleware/auth_middleware.py", line 12, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eskim00/Documents/Programming/KDT_AWS/Assignment/2-owen-community-be/routers/post_router.py", line 24, in get_posts
+    data = await post_controller.getAllPosts(limit=limit, offset=offset, current_user_id=(user or {}).get("userId"))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eskim00/Documents/Programming/KDT_AWS/Assignment/2-owen-community-be/controllers/post_controller.py", line 65, in getAllPosts
+    formatted_posts = [await self._formatPost(post, current_user_id=current_user_id) for post in posts_data]
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eskim00/Documents/Programming/KDT_AWS/Assignment/2-owen-community-be/controllers/post_controller.py", line 34, in _formatPost
+    post_images = await post_model.getPostImages(post["postId"])
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eskim00/Documents/Programming/KDT_AWS/Assignment/2-owen-community-be/models/post_model.py", line 287, in getPostImages
+    rows = await fetch_all(
+           ^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/Users/eskim00/Documents/Programming/KDT_AWS/Assignment/2-owen-community-be/utils/database/db.py", line 73, in fetch_all
+    return await _execute(query, params=params, fetchall=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/eskim00/Documents/Programming/KDT_AWS/Assignment/2-owen-community-be/utils/database/db.py", line 65, in _execute
+    raise e
+  File "/Users/eskim00/Documents/Programming/KDT_AWS/Assignment/2-owen-community-be/utils/database/db.py", line 54, in _execute
+    await cursor.execute(query, params or ())
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/aiomysql/cursors.py", line 239, in execute
+    await self._query(query)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/aiomysql/cursors.py", line 457, in _query
+    await conn.query(q)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/aiomysql/connection.py", line 469, in query
+    await self._read_query_result(unbuffered=unbuffered)
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/aiomysql/connection.py", line 683, in _read_query_result
+    await result.read()
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/aiomysql/connection.py", line 1164, in read
+    first_packet = await self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/aiomysql/connection.py", line 652, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/pymysql/protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/community/lib/python3.13/site-packages/pymysql/err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.ProgrammingError: (1146, "Table 'community.post_images' doesn't exist")
+2026-02-09 15:54:27,611 - [N/A] - main - INFO - Test router included (Debug Mode: ON)
+2026-02-09 15:56:40,033 - [9d05a0aee7ce834f] - access_logger - INFO - Request: OPTIONS /v1/auth/login - IP: 127.0.0.1
+2026-02-09 15:56:40,034 - [9d05a0aee7ce834f] - access_logger - INFO - Response: OPTIONS /v1/auth/login - Status: 200 - Time: 0.81ms
+2026-02-09 15:56:40,036 - [2f84751ab537be32] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 15:56:40,289 - [2f84751ab537be32] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 252.92ms
+2026-02-09 16:01:11,122 - [2f051ae25c7042b2] - access_logger - INFO - Request: OPTIONS /v1/posts/01KH0K8DVVWNBE6Z9PYG0RWWDM/likes - IP: 127.0.0.1
+2026-02-09 16:01:11,124 - [2f051ae25c7042b2] - access_logger - INFO - Response: OPTIONS /v1/posts/01KH0K8DVVWNBE6Z9PYG0RWWDM/likes - Status: 200 - Time: 2.11ms
+2026-02-09 16:01:11,127 - [ea977fa2836e94c1] - access_logger - INFO - Request: POST /v1/posts/01KH0K8DVVWNBE6Z9PYG0RWWDM/likes - IP: 127.0.0.1
+2026-02-09 16:01:11,143 - [ea977fa2836e94c1] - access_logger - INFO - Response: POST /v1/posts/01KH0K8DVVWNBE6Z9PYG0RWWDM/likes - Status: 201 - Time: 15.84ms
+2026-02-09 16:03:08,740 - [21556c8ab6a29497] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 16:03:09,001 - [21556c8ab6a29497] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 261.57ms
+2026-02-09 16:08:07,986 - [ecf6faec6c9be332] - access_logger - INFO - Request: OPTIONS /v1/auth/login - IP: 127.0.0.1
+2026-02-09 16:08:07,987 - [ecf6faec6c9be332] - access_logger - INFO - Response: OPTIONS /v1/auth/login - Status: 200 - Time: 1.02ms
+2026-02-09 16:08:07,989 - [95b75cb995e651c3] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 16:08:08,249 - [95b75cb995e651c3] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 259.44ms
+2026-02-09 16:17:44,556 - [ee6fc3398e8b9972] - access_logger - INFO - Request: OPTIONS /v1/auth/login - IP: 127.0.0.1
+2026-02-09 16:17:44,558 - [ee6fc3398e8b9972] - access_logger - INFO - Response: OPTIONS /v1/auth/login - Status: 200 - Time: 1.77ms
+2026-02-09 16:17:44,561 - [bacedd9077f5c69f] - access_logger - INFO - Request: POST /v1/auth/login - IP: 127.0.0.1
+2026-02-09 16:17:44,894 - [bacedd9077f5c69f] - access_logger - INFO - Response: POST /v1/auth/login - Status: 200 - Time: 332.19ms
+2026-02-09 16:22:58,769 - [5e709b1ae893b7fe] - access_logger - INFO - Request: OPTIONS /v1/posts/01KH0M7RWP535M7RAVESBGZMMG/likes - IP: 127.0.0.1
+2026-02-09 16:22:58,771 - [5e709b1ae893b7fe] - access_logger - INFO - Response: OPTIONS /v1/posts/01KH0M7RWP535M7RAVESBGZMMG/likes - Status: 200 - Time: 2.78ms
+2026-02-09 16:22:58,792 - [0c880c2635eb5661] - access_logger - INFO - Request: POST /v1/posts/01KH0M7RWP535M7RAVESBGZMMG/likes - IP: 127.0.0.1
+2026-02-09 16:22:58,840 - [0c880c2635eb5661] - access_logger - INFO - Response: POST /v1/posts/01KH0M7RWP535M7RAVESBGZMMG/likes - Status: 201 - Time: 48.01ms
